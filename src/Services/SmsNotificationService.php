@@ -226,8 +226,32 @@ final class SmsNotificationService
 
     private function providerIndicatesFailure(array $response): bool
     {
-        $status = strtolower((string) ($response['status'] ?? $response['Status'] ?? ''));
-        return in_array($status, ['error', 'failed', 'failure', 'false'], true);
+        foreach ($response as $key => $value) {
+            $normalizedKey = strtolower((string) $key);
+
+            if (is_array($value)) {
+                if ($this->providerIndicatesFailure($value)) {
+                    return true;
+                }
+                continue;
+            }
+
+            $text = strtolower(trim((string) $value));
+            if (in_array($normalizedKey, ['status', 'result'], true)
+                && in_array($text, ['error', 'failed', 'failure', 'false'], true)) {
+                return true;
+            }
+
+            if ($normalizedKey === 'success' && in_array($text, ['0', 'false', 'no', 'failed', 'error'], true)) {
+                return true;
+            }
+
+            if (in_array($normalizedKey, ['error', 'errors'], true) && $text !== '') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function findMessageId(mixed $value): ?string
