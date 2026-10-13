@@ -116,3 +116,19 @@ These values are persisted in the `app_settings` table and loaded across the aut
 - Apache rewrite file is in `public/.htaccess`.
 - Nginx sample is `nginx.conf.example`.
 # Modern-IMS
+
+## Static Pharmacy Storefront
+
+The workspace root also contains a frontend-only landing page at [index.html](index.html). It is independent of the PHP admin application and can be opened directly in a browser or deployed to static hosting.
+
+### Configure the storefront
+
+Edit [assets/js/config.js](assets/js/config.js) before publishing. Replace the placeholder store name, international WhatsApp number (digits only, without `+`), phone, address, opening hours, map URL and social links. Product cards and promotional copy are intentionally sample content and should be replaced with confirmed store information.
+
+### Run locally
+
+Open [index.html](index.html) directly, or serve the workspace root with any static file server. No PHP, database, build step or installation is required for the storefront.
+
+### Deploy
+
+Upload `index.html` and the root `assets/` directory to Netlify, GitHub Pages, shared hosting or another static host. Keep the existing `public/` directory separate if the PHP admin application is deployed alongside it.
