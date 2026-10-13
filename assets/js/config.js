@@ -1,14 +1,14 @@
 // Store-specific values live here. Replace placeholders before publishing.
 window.STORE_CONFIG = {
-    name: 'MediMart',
-    whatsappNumber: '2340000000000',
-    phone: '+234 000 000 0000',
-    address: 'Store address to be confirmed',
+    name: 'CHYPAUL',
+    whatsappNumber: '2348060876176',
+    phone: '+2348060876176',
+    address: 'Ugbokpo Benue State',
     hours: 'Mon-Sat, 8am-8pm',
     mapsUrl: '#',
     social: {
         instagram: '#',
         facebook: '#',
-        whatsapp: '#'
+        whatsapp: 'https://wa.me/2348060876176'
     }
 };
