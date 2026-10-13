@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="documentation">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Operator Documentation</h1>
+                    <p>Quick operational guide for day-to-day use of ANTOBELL IMS.</p>
+                </div>
+                <a href="settings.html" class="btn btn-outline-secondary">Back to settings</a>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <h2 class="h5">Getting Started</h2>
+                <ol class="mb-0">
+                    <li>Login at <code>login.html</code> using an authorized account.</li>
+                    <li>Use Dashboard for KPIs and recent movement visibility.</li>
+                    <li>Create and manage masters first: Products, Warehouses, Suppliers.</li>
+                </ol>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <h2 class="h5">Core Flows</h2>
+                <ul class="mb-0">
+                    <li><strong>Inbound:</strong> Purchase Orders -> Send -> Receive to increase stock.</li>
+                    <li><strong>Outbound:</strong> Sales Orders -> Confirm -> Fulfill to decrease stock.</li>
+                    <li><strong>Direct Adjustments:</strong> Use Stock Movements with strict negative-stock guard.</li>
+                </ul>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <h2 class="h5">Roles</h2>
+                <ul class="mb-0">
+                    <li><strong>Admin/Manager:</strong> Access Suppliers, Reports, and Settings.</li>
+                    <li><strong>Staff:</strong> Operational modules only; restricted from admin/manager areas.</li>
+                </ul>
+            </div>
+
+            <div class="shell-card p-3">
+                <h2 class="h5">Troubleshooting</h2>
+                <ul class="mb-0">
+                    <li>If login succeeds but page does not move, refresh and ensure session cookies are enabled.</li>
+                    <li>If data pages fail to load, confirm app is served from <code>public/</code> root and API routes
+                        are reachable.</li>
+                    <li>For server errors, inspect <code>storage/logs/app.log</code>.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="reports">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Reports</h1>
+                    <p>Stock valuation, movement history, and low-stock exports.</p>
+                </div>
+                <button id="export-csv-btn" class="btn btn-primary">Export movement CSV</button>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex flex-wrap gap-2 align-items-end">
+                    <div>
+                        <label class="form-label mb-1" for="valuation-search">Valuation search</label>
+                        <input id="valuation-search" class="form-control" type="search"
+                            placeholder="SKU, product, category">
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="low-stock-search">Low-stock search</label>
+                        <input id="low-stock-search" class="form-control" type="search" placeholder="SKU or product">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <h2 class="h5 mb-2">Stock valuation</h2>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Cost price</th>
+                                <th>Stock value (NGN)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="valuation-body">
+                            <tr>
+                                <td colspan="6" class="text-muted">Loading valuation...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="valuation-meta" class="mb-0 mt-2 text-muted">Loading...</p>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex flex-wrap gap-2 align-items-end mb-2">
+                    <h2 class="h5 mb-0 me-auto">Movement history</h2>
+                    <div>
+                        <label class="form-label mb-1" for="movement-type">Type</label>
+                        <select id="movement-type" class="form-select">
+                            <option value="all">All types</option>
+                            <option value="in">In</option>
+                            <option value="out">Out</option>
+                            <option value="adjustment">Adjustment</option>
+                            <option value="transfer">Transfer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="movement-warehouse">Warehouse</label>
+                        <select id="movement-warehouse" class="form-select">
+                            <option value="">All warehouses</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="movement-date-from">From</label>
+                        <input id="movement-date-from" class="form-control" type="date">
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="movement-date-to">To</label>
+                        <input id="movement-date-to" class="form-control" type="date">
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="movement-search">Search</label>
+                        <input id="movement-search" class="form-control" type="search"
+                            placeholder="SKU, product, reference">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>SKU</th>
+                                <th>Product</th>
+                                <th>Warehouse</th>
+                                <th>Qty</th>
+                                <th>Reference</th>
+                                <th>By</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movement-body">
+                            <tr>
+                                <td colspan="9" class="text-muted">Loading movements...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <p id="movement-meta" class="mb-0 text-muted">Loading...</p>
+                    <div class="btn-group btn-group-sm">
+                        <button id="movement-prev" class="btn btn-outline-secondary" type="button">Prev</button>
+                        <button id="movement-next" class="btn btn-outline-secondary" type="button">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <h2 class="h5 mb-2">Low-stock</h2>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product</th>
+                                <th>Qty on hand</th>
+                                <th>Reorder level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="low-stock-body">
+                            <tr>
+                                <td colspan="4" class="text-muted">Loading low-stock...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="low-stock-meta" class="mb-0 mt-2 text-muted">Loading...</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="reports-toast" class="toast align-items-center text-bg-primary border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="reports-toast-body" class="toast-body">Ready.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/reports.js"></script>
+</body>
+
+</html>

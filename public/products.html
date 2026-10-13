@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="products">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Products</h1>
+                    <p>Catalog of all items you stock.</p>
+                </div>
+                <button id="open-product-modal-btn" class="btn btn-primary">+ Add Product</button>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-5">
+                        <label for="product-search" class="form-label mb-1">Search</label>
+                        <input id="product-search" type="search" class="form-control"
+                            placeholder="Search by name or SKU">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="category-filter" class="form-label mb-1">Category</label>
+                        <select id="category-filter" class="form-select">
+                            <option value="">All categories</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="page-size" class="form-label mb-1">Rows per page</label>
+                        <select id="page-size" class="form-select">
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0" id="products-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th>Qty on hand</th>
+                                <th>Cost (NGN)</th>
+                                <th>Price (NGN)</th>
+                                <th>Reorder</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <tr>
+                                <td colspan="8" class="text-muted">Loading products...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                    <p id="products-meta" class="mb-0 text-muted small">Showing 0 products</p>
+                    <div class="btn-group">
+                        <button id="prev-page" class="btn btn-outline-secondary btn-sm" type="button">Prev</button>
+                        <button id="next-page" class="btn btn-outline-secondary btn-sm" type="button">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Add Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="product-form" novalidate>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="product-name" class="form-label">Product name</label>
+                                <input id="product-name" name="name" type="text" class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="product-sku" class="form-label">SKU</label>
+                                <input id="product-sku" name="sku" type="text" class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="product-category" class="form-label">Category</label>
+                                <select id="product-category" name="category_id" class="form-select" required></select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="product-unit" class="form-label">Unit</label>
+                                <input id="product-unit" name="unit" type="text" class="form-control" value="piece"
+                                    required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="product-cost" class="form-label">Cost price</label>
+                                <input id="product-cost" name="cost_price" type="number" min="0" step="0.01"
+                                    class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="product-price" class="form-label">Selling price</label>
+                                <input id="product-price" name="selling_price" type="number" min="0" step="0.01"
+                                    class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="product-reorder" class="form-label">Reorder level</label>
+                                <input id="product-reorder" name="reorder_level" type="number" min="0" step="1"
+                                    class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <p class="text-muted small mt-3 mb-0">Stock quantity is managed through stock movements and PO
+                            receiving, not from this form.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="save-product-btn" type="submit" class="btn btn-primary">Save product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+        <div id="app-toast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="app-toast-body" class="toast-body">Saved.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/products.js"></script>
+</body>
+
+</html>

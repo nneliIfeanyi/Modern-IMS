@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="customers">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <div>
+                    <h1>Customers</h1>
+                    <p class="mb-0">Customer balances, payment posting, and statement history.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button id="new-customer-btn" class="btn btn-primary" type="button">
+                        <i class="bi bi-person-plus me-1" aria-hidden="true"></i>New Customer
+                    </button>
+                    <button id="customers-refresh" class="btn btn-outline-secondary" type="button">Refresh</button>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-12">
+                    <div class="shell-card p-3 h-100">
+                        <div class="d-flex gap-2 mb-3">
+                            <input id="customers-search" class="form-control" type="search"
+                                placeholder="Search customer code, name, phone or email">
+                            <button id="customers-search-btn" class="btn btn-primary" type="button">Search</button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 68vh; overflow: auto;">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th class="text-end">Balance</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customers-list-body">
+                                    <tr>
+                                        <td colspan="5" class="text-muted">Loading customers...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="customer-summary-column" class="col-12 col-xl-6">
+                    <div class="shell-card p-3 h-100">
+                        <h2 class="h6 mb-3">Customer summary</h2>
+                        <div id="customer-summary-empty" class="text-muted">Select a customer to view their credit book.
+                        </div>
+                        <div id="customer-summary-panel" class="d-none">
+                            <p class="mb-1"><strong id="customer-name">-</strong></p>
+                            <p class="mb-1 text-muted" id="customer-code">-</p>
+                            <p class="mb-1">Phone: <span id="customer-phone">-</span></p>
+                            <p class="mb-1">Email: <span id="customer-email">-</span></p>
+                            <p class="mb-1">Credit limit: <span id="customer-credit-limit">NGN 0.00</span></p>
+                            <p class="mb-1">Opening balance: <span id="customer-opening-balance">NGN 0.00</span></p>
+                            <p class="mb-3 fw-semibold">Current balance: <span id="customer-balance">NGN 0.00</span></p>
+
+                            <form id="customer-payment-form" class="border-top pt-3">
+                                <h3 class="h6 mb-3">Record payment</h3>
+                                <div class="mb-3">
+                                    <label class="form-label" for="payment-amount">Amount</label>
+                                    <input id="payment-amount" class="form-control" type="number" min="0.01"
+                                        step="0.01">
+                                    <div class="invalid-feedback d-block" data-payment-error="amount"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="payment-method">Method</label>
+                                    <select id="payment-method" class="form-select">
+                                        <option value="cash">Cash</option>
+                                        <option value="transfer">Transfer</option>
+                                        <option value="card">Card</option>
+                                        <option value="cheque">Cheque</option>
+                                    </select>
+                                    <div class="invalid-feedback d-block" data-payment-error="method"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="payment-reference">Reference</label>
+                                    <input id="payment-reference" class="form-control" type="text" maxlength="120">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="payment-notes">Notes</label>
+                                    <textarea id="payment-notes" class="form-control" rows="2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="payment-date">Paid at</label>
+                                    <input id="payment-date" class="form-control" type="datetime-local">
+                                </div>
+                                <button id="payment-submit" class="btn btn-primary w-100" type="submit">Save
+                                    payment</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="customer-statement-column" class="col-12 col-xl-6">
+                    <div class="shell-card p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h6 mb-0">Statement</h2>
+                            <button id="customer-print-statement" class="btn btn-sm btn-outline-secondary" type="button"
+                                disabled>Print statement</button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 68vh; overflow: auto;">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customer-statement-body">
+                                    <tr>
+                                        <td colspan="3" class="text-muted">No customer selected.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="customer-print-receipt" class="btn btn-sm btn-outline-primary mt-3" type="button"
+                            disabled>Print last payment receipt</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="customerWorkspaceModal" tabindex="-1" aria-labelledby="customerWorkspaceModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="customerWorkspaceModalTitle" class="modal-title fs-5">Customer workspace</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="customer-workspace-body" class="modal-body">
+                    <div class="row g-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="editCustomerModalTitle" class="modal-title fs-5">Edit Customer</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="customer-edit-form">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-name">Full name</label>
+                                <input id="edit-customer-name" class="form-control" type="text" maxlength="150">
+                                <div class="invalid-feedback d-block" data-edit-error="full_name"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-phone">Phone</label>
+                                <input id="edit-customer-phone" class="form-control" type="text" maxlength="40">
+                                <div class="invalid-feedback d-block" data-edit-error="phone"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-email">Email</label>
+                                <input id="edit-customer-email" class="form-control" type="email" maxlength="190">
+                                <div class="invalid-feedback d-block" data-edit-error="email"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-address">Address</label>
+                                <input id="edit-customer-address" class="form-control" type="text" maxlength="255">
+                                <div class="invalid-feedback d-block" data-edit-error="address"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-credit-limit">Credit limit</label>
+                                <input id="edit-customer-credit-limit" class="form-control" type="number" min="0"
+                                    step="0.01">
+                                <div class="invalid-feedback d-block" data-edit-error="credit_limit"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="edit-customer-opening-balance">Opening balance</label>
+                                <input id="edit-customer-opening-balance" class="form-control" type="number"
+                                    step="0.01">
+                                <div class="invalid-feedback d-block" data-edit-error="opening_balance"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="customer-edit-submit" class="btn btn-primary" type="submit">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="newCustomerModal" tabindex="-1" aria-labelledby="newCustomerModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="newCustomerModalTitle" class="modal-title fs-5">New Customer</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="customer-create-form">
+                    <div class="modal-body">
+                        <p class="text-muted small">Create a customer record before selling on credit.</p>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-name">Full name</label>
+                                <input id="new-customer-name" class="form-control" type="text" maxlength="150">
+                                <div class="invalid-feedback d-block" data-create-error="full_name"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-phone">Phone</label>
+                                <input id="new-customer-phone" class="form-control" type="text" maxlength="40">
+                                <div class="invalid-feedback d-block" data-create-error="phone"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-email">Email</label>
+                                <input id="new-customer-email" class="form-control" type="email" maxlength="190">
+                                <div class="invalid-feedback d-block" data-create-error="email"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-address">Address</label>
+                                <input id="new-customer-address" class="form-control" type="text" maxlength="255">
+                                <div class="invalid-feedback d-block" data-create-error="address"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-credit-limit">Credit limit</label>
+                                <input id="new-customer-credit-limit" class="form-control" type="number" min="0"
+                                    step="0.01" value="0">
+                                <div class="invalid-feedback d-block" data-create-error="credit_limit"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="new-customer-opening-balance">Opening balance</label>
+                                <input id="new-customer-opening-balance" class="form-control" type="number" step="0.01"
+                                    value="0">
+                                <div class="invalid-feedback d-block" data-create-error="opening_balance"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="customer-create-submit" class="btn btn-primary" type="submit">Create customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+        <div id="customers-toast" class="toast align-items-center text-bg-success border-0" role="status"
+            aria-live="polite" aria-atomic="true">
+            <div class="d-flex">
+                <div id="customers-toast-body" class="toast-body">Saved.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/customers.js"></script>
+</body>
+
+</html>

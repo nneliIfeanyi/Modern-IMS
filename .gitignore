@@ -1,0 +1,18 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+/vendor/
+
+# Runtime data
+/storage/logs/
+/storage/tmp/
+*.log
+
+# Tool caches
+.phpunit.result.cache
+
+# Design references are kept outside the application commit
+/wireframe

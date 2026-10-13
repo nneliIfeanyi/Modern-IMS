@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="settings">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Settings</h1>
+                    <p>Profile and account security.</p>
+                </div>
+                <button id="settings-logout-btn" class="btn btn-outline-secondary" type="button">Logout</button>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0">Profile</h2>
+                    <span id="settings-role-badge" class="badge text-bg-primary">-</span>
+                </div>
+
+                <form id="profile-form" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="profile-full-name" class="form-label">Full name</label>
+                            <input id="profile-full-name" name="full_name" class="form-control" type="text"
+                                maxlength="120" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="profile-email" class="form-label">Email</label>
+                            <input id="profile-email" name="email" class="form-control" type="email" maxlength="190"
+                                required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary" type="submit">Save profile</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0">Brand and Theme</h2>
+                    <a href="documentation.html" class="btn btn-sm btn-outline-primary">Open Documentation</a>
+                </div>
+
+                <form id="app-settings-form" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="app-site-name" class="form-label">Site name</label>
+                            <input id="app-site-name" name="site_name" class="form-control" type="text" maxlength="100"
+                                required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="app-theme-color" class="form-label">Theme color</label>
+                            <input id="app-theme-color" name="theme_color" class="form-control form-control-color"
+                                type="color" value="#0d6efd" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary" type="submit">Save brand settings</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <h2 class="h5 mb-0">Categories</h2>
+                        <p class="text-muted small mb-0">Manage the categories used by products.</p>
+                    </div>
+                    <button id="category-cancel-btn" class="btn btn-sm btn-outline-secondary d-none" type="button">
+                        Cancel edit
+                    </button>
+                </div>
+
+                <form id="category-form" class="row g-3 mb-3" novalidate>
+                    <div class="col-md-4">
+                        <label for="category-name" class="form-label">Category name</label>
+                        <input id="category-name" name="name" class="form-control" type="text" maxlength="100" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="category-description" class="form-label">Description</label>
+                        <input id="category-description" name="description" class="form-control" type="text" maxlength="255">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button id="category-submit-btn" class="btn btn-primary w-100" type="submit">Add category</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categories-table-body"></tbody>
+                    </table>
+                </div>
+                <p id="categories-empty" class="text-muted small mb-0 mt-3 d-none">No categories found.</p>
+            </div>
+
+            <div class="shell-card p-3">
+                <h2 class="h5 mb-2">Password</h2>
+                <form id="password-form" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="password-current" class="form-label">Current password</label>
+                            <input id="password-current" name="current_password" class="form-control" type="password"
+                                required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="password-new" class="form-label">New password</label>
+                            <input id="password-new" name="new_password" class="form-control" type="password"
+                                minlength="8" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="password-confirm" class="form-label">Confirm password</label>
+                            <input id="password-confirm" name="confirm_password" class="form-control" type="password"
+                                minlength="8" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary" type="submit">Update password</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="settings-toast" class="toast align-items-center text-bg-primary border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="settings-toast-body" class="toast-body">Ready.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/settings.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="suppliers">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Suppliers</h1>
+                    <p>Vendors you order stock from.</p>
+                </div>
+                <button id="open-supplier-modal-btn" class="btn btn-primary">+ Add Supplier</button>
+            </div>
+            <div class="shell-card p-3 mb-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-8">
+                        <label for="supplier-search" class="form-label mb-1">Search</label>
+                        <input id="supplier-search" type="search" class="form-control"
+                            placeholder="Search by supplier, contact, email or phone">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Contact person</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Open POs</th>
+                                <th>Total spend (YTD)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="suppliers-table-body">
+                            <tr>
+                                <td colspan="7" class="text-muted">Loading suppliers...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="suppliers-meta" class="mb-0 mt-3 text-muted small">Showing 0 suppliers</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="supplierModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supplierModalTitle">Add Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="supplier-form" novalidate>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="supplier-name" class="form-label">Supplier name</label>
+                                <input id="supplier-name" name="name" type="text" class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="supplier-contact" class="form-label">Contact person</label>
+                                <input id="supplier-contact" name="contact_person" type="text" class="form-control">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="supplier-phone" class="form-label">Phone</label>
+                                <input id="supplier-phone" name="phone" type="text" class="form-control">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="supplier-email" class="form-label">Email</label>
+                                <input id="supplier-email" name="email" type="email" class="form-control">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="supplier-address" class="form-label">Address</label>
+                                <textarea id="supplier-address" name="address" class="form-control" rows="3"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="save-supplier-btn" type="submit" class="btn btn-primary">Save supplier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+        <div id="app-toast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="app-toast-body" class="toast-body">Saved.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/suppliers.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<header class="app-header fixed-top d-flex align-items-center px-3 px-md-4">
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-secondary d-md-none" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#appSidebar" aria-controls="appSidebar">
+            <i class="bi bi-list"></i>
+        </button>
+        <button id="sidebarToggle" class="btn btn-outline-secondary d-none d-md-inline-flex" type="button"
+            aria-controls="appSidebar" aria-expanded="true" aria-label="Collapse sidebar" title="Collapse sidebar">
+            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+        <a href="dashboard.html" class="text-decoration-none logo">ANTOBELL IMS</a>
+    </div>
+
+    <div class="ms-auto d-flex align-items-center gap-2 gap-md-3">
+        <div class="search-wrap">
+            <input class="form-control form-control-sm" type="search" placeholder="Search products, SKU..."
+                aria-label="Search">
+        </div>
+        <div class="dropdown">
+            <button id="sms-log-toggle" class="btn btn-light position-relative" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false" aria-label="SMS logs" title="SMS logs">
+                <i class="bi bi-bell"></i>
+                <span id="sms-log-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary d-none"></span>
+            </button>
+            <div id="sms-log-menu" class="dropdown-menu dropdown-menu-end p-0 sms-log-menu" aria-labelledby="sms-log-toggle">
+                <div class="px-3 py-2 border-bottom fw-semibold">SMS activity</div>
+                <div id="sms-log-list" class="sms-log-list">
+                    <div class="px-3 py-3 text-muted small">Loading SMS logs...</div>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                JI
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="settings.html">Profile</a></li>
+                <li><a id="topbar-logout" class="dropdown-item" href="login.html">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</header>

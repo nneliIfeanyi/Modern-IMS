@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouses | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="warehouses">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Warehouses</h1>
+                    <p>Storage locations used for stock and movements.</p>
+                </div>
+                <button id="open-warehouse-modal-btn" class="btn btn-primary">+ Add Warehouse</button>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-8">
+                        <label for="warehouse-search" class="form-label mb-1">Search</label>
+                        <input id="warehouse-search" type="search" class="form-control"
+                            placeholder="Search by warehouse name or location">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Warehouse</th>
+                                <th>Location</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="warehouses-table-body">
+                            <tr>
+                                <td colspan="3" class="text-muted">Loading warehouses...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="warehouses-meta" class="mb-0 mt-3 text-muted small">Showing 0 warehouses</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warehouseModalTitle">Add Warehouse</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="warehouse-form" novalidate>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="warehouse-name" class="form-label">Warehouse name</label>
+                                <input id="warehouse-name" name="name" type="text" class="form-control" required>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-12">
+                                <label for="warehouse-location" class="form-label">Location</label>
+                                <input id="warehouse-location" name="location" type="text" class="form-control">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button id="save-warehouse-btn" type="submit" class="btn btn-primary">Save warehouse</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1090">
+        <div id="app-toast" class="toast align-items-center text-bg-success border-0" role="status" aria-live="polite"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="app-toast-body" class="toast-body">Saved.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/warehouses.js"></script>
+</body>
+
+</html>

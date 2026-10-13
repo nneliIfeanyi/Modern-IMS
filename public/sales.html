@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales / Stock-out | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="sales">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Sales / Stock-out</h1>
+                    <p>Track outbound stock and fulfillment.</p>
+                </div>
+                <a href="sales-order-detail.html?new=1" class="btn btn-primary">+ New Sales Order</a>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-3" id="so-status-group">
+                    <button type="button" class="btn btn-outline-secondary btn-sm active"
+                        data-so-status="all">All</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-so-status="draft">Draft</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-so-status="confirmed">Confirmed</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-so-status="partially_fulfilled">Partially fulfilled</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-so-status="fulfilled">Fulfilled</button>
+                </div>
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-4">
+                        <label for="so-warehouse-filter" class="form-label mb-1">Warehouse</label>
+                        <select id="so-warehouse-filter" class="form-select">
+                            <option value="">All warehouses</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <label for="so-search" class="form-label mb-1">Search</label>
+                        <input id="so-search" type="search" class="form-control"
+                            placeholder="Search by SO number or customer">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>SO number</th>
+                                <th>Customer</th>
+                                <th>Warehouse</th>
+                                <th>Items</th>
+                                <th>Total (NGN)</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="so-table-body">
+                            <tr>
+                                <td colspan="8" class="text-muted">Loading sales orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                    <p id="so-meta" class="mb-0 text-muted small">Showing 0 sales orders</p>
+                    <div class="btn-group">
+                        <button id="so-prev" class="btn btn-outline-secondary btn-sm" type="button">Prev</button>
+                        <button id="so-next" class="btn btn-outline-secondary btn-sm" type="button">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/sales-orders.js"></script>
+</body>
+
+</html>

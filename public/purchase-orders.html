@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Orders | ANTOBELL IMS</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/app-shell.css" rel="stylesheet">
+</head>
+
+<body data-nav="purchase-orders">
+    <div data-include="partials/topbar.html"></div>
+    <div class="app-body">
+        <div data-include="partials/sidebar.html"></div>
+        <main class="app-main">
+            <div class="page-head d-flex justify-content-between align-items-start">
+                <div>
+                    <h1>Purchase Orders</h1>
+                    <p>Orders placed with suppliers to replenish stock.</p>
+                </div>
+                <a href="purchase-order-detail.html?new=1" class="btn btn-primary">+ New Purchase Order</a>
+            </div>
+
+            <div class="shell-card p-3 mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-3" id="po-status-group">
+                    <button type="button" class="btn btn-outline-secondary btn-sm active"
+                        data-po-status="all">All</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-po-status="draft">Draft</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-po-status="ordered">Ordered</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-po-status="partially_received">Partially received</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        data-po-status="received">Received</button>
+                </div>
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-4">
+                        <label for="po-supplier-filter" class="form-label mb-1">Supplier</label>
+                        <select id="po-supplier-filter" class="form-select">
+                            <option value="">All suppliers</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <label for="po-search" class="form-label mb-1">Search</label>
+                        <input id="po-search" type="search" class="form-control"
+                            placeholder="Search by PO number or supplier">
+                    </div>
+                </div>
+            </div>
+
+            <div class="shell-card p-3">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>PO number</th>
+                                <th>Supplier</th>
+                                <th>Items</th>
+                                <th>Total (NGN)</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Expected</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="po-table-body">
+                            <tr>
+                                <td colspan="8" class="text-muted">Loading purchase orders...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                    <p id="po-meta" class="mb-0 text-muted small">Showing 0 purchase orders</p>
+                    <div class="btn-group">
+                        <button id="po-prev" class="btn btn-outline-secondary btn-sm" type="button">Prev</button>
+                        <button id="po-next" class="btn btn-outline-secondary btn-sm" type="button">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="assets/js/include.js"></script>
+    <script type="module" src="assets/js/purchase-orders.js"></script>
+</body>
+
+</html>

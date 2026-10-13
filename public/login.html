@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS Login</title>
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-7 col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4 p-md-5">
+                        <h1 class="h4 mb-3">IMS Login</h1>
+                        <p class="text-muted small mb-4">Sign in with your staff account.</p>
+
+                        <form id="login-form" novalidate>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" id="password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                        </form>
+
+                        <div id="feedback" class="alert mt-3 d-none" role="alert"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { login, getCurrentUser } from './assets/js/auth.js';
+
+        const form = document.getElementById('login-form');
+        const feedback = document.getElementById('feedback');
+        const DASHBOARD_URL = 'dashboard.html';
+
+        const showMessage = (message, type = 'danger') => {
+            feedback.textContent = message;
+            feedback.className = `alert alert-${type} mt-3`;
+        };
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showMessage('Email and password are required.');
+                return;
+            }
+
+            try {
+                const res = await login(email, password);
+                showMessage(res.message, 'success');
+
+                const me = await getCurrentUser();
+                showMessage(`Logged in as ${me.data.full_name} (${me.data.role}).`, 'success');
+
+                // Give the user a short confirmation moment, then route into the app.
+                setTimeout(() => {
+                    window.location.href = DASHBOARD_URL;
+                }, 350);
+            } catch (error) {
+                showMessage(error.message || 'Login failed.');
+            }
+        });
+
+        // If a valid session already exists, skip the login screen entirely.
+        (async () => {
+            try {
+                await getCurrentUser();
+                window.location.href = DASHBOARD_URL;
+            } catch (error) {
+                // Keep user on login when no active session exists.
+            }
+        })();
+    </script>
+</body>
+
+</html>
