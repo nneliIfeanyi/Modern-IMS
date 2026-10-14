@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Featured Items | ChyPaul Admin</title>
+	<script src="assets/js/config.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="public/assets/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<style>
+		.admin-locked .admin-shell { display: none; }
+		.admin-gate { display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 20px; }
+		.admin-locked .admin-gate { display: flex; }
+		.gate-card { width: min(100%, 390px); padding: 28px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(20, 67, 57, .08); }
+		:root { --ink: #123c34; --muted: #6b817a; --line: #dce8e3; --cream: #fffdf6; --green: #0b5d4b; --yellow: #f4c95d; }
+		body { min-height: 100vh; color: var(--ink); background: var(--cream); font-family: "DM Sans", sans-serif; }
+		h1, h2, h3 { font-family: Manrope, sans-serif; }
+		.admin-shell { max-width: 1180px; margin: 0 auto; padding: 38px 20px 60px; }
+		.page-head { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 28px; }
+		.page-head h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+		.page-head p { margin: 8px 0 0; color: var(--muted); }
+		.panel { padding: 24px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(20, 67, 57, .06); }
+		.panel h2 { margin-bottom: 18px; font-size: 1.15rem; }
+		.featured-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+		.featured-item { overflow: hidden; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+		.featured-item.is-inactive { opacity: .58; }
+		.featured-item img { display: block; width: 100%; height: 145px; object-fit: cover; }
+		.featured-item-body { padding: 14px; }
+		.featured-item h3 { margin: 0 0 6px; font-size: .98rem; }
+		.featured-item p { min-height: 34px; margin: 0 0 12px; color: var(--muted); font-size: .75rem; }
+		.item-meta { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; color: var(--green); font-size: .67rem; font-weight: 700; }
+		.form-label { margin-bottom: 6px; font-size: .78rem; font-weight: 700; }
+		.form-control { border-color: var(--line); }
+		.btn-primary { --bs-btn-bg: var(--green); --bs-btn-border-color: var(--green); --bs-btn-hover-bg: #084739; --bs-btn-hover-border-color: #084739; }
+		.status { min-height: 24px; margin-bottom: 16px; font-size: .8rem; }
+		@media (max-width: 991.98px) { .featured-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+		@media (max-width: 575.98px) { .admin-shell { padding: 24px 14px 45px; }.page-head { display: block; }.page-head .btn { margin-top: 18px; }.panel { padding: 18px; }.featured-list { grid-template-columns: 1fr; } }
+	</style>
+</head>
+<body class="admin-locked">
+	<div class="admin-gate"><div class="gate-card"><h1 class="h4">Admin access</h1><p class="text-muted small">Enter the four-digit access code to continue.</p><form id="admin-gate-form"><label class="form-label" for="admin-pin">Access code</label><input id="admin-pin" class="form-control" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required><button class="btn btn-primary w-100 mt-3" type="submit">Unlock</button><p id="gate-error" class="text-danger small mt-2 mb-0" aria-live="polite"></p></form></div></div>
+	<main class="admin-shell">
+		<header class="page-head">
+			<div><h1>Featured items</h1><p>Manage the eight cards shown on the public storefront.</p></div>
+			<a class="btn btn-outline-secondary" href="index.html"><i class="bi bi-arrow-left me-1"></i>View storefront</a>
+		</header>
+
+		<div id="status" class="status" role="status" aria-live="polite"></div>
+
+		<section class="panel mb-4">
+			<h2 id="form-title">Add featured item</h2>
+			<form id="featured-form" novalidate>
+				<div class="row g-3">
+					<div class="col-md-6"><label class="form-label" for="title">Title</label><input id="title" name="title" class="form-control" maxlength="150" required></div>
+					<div class="col-md-6"><label class="form-label" for="category">Category</label><input id="category" name="category" class="form-control" maxlength="60" placeholder="PHARMACY" required></div>
+					<div class="col-md-6"><label class="form-label" for="label">Short label</label><input id="label" name="label" class="form-control" maxlength="100" required></div>
+					<div class="col-md-6"><label class="form-label" for="sort_order">Display order (1-8)</label><input id="sort_order" name="sort_order" class="form-control" type="number" min="1" max="8" value="1" required></div>
+					<div class="col-12"><label class="form-label" for="description">Description</label><input id="description" name="description" class="form-control" maxlength="255" required></div>
+					<div class="col-md-8"><label class="form-label" for="image">Product image</label><input id="image" name="image" class="form-control" type="file" accept="image/jpeg,image/png,image/webp" required></div>
+					<div class="col-12"><div class="form-check"><input id="is_active" name="is_active" class="form-check-input" type="checkbox" checked><label class="form-check-label" for="is_active">Show this item on the storefront</label></div></div>
+				</div>
+				<div class="d-flex gap-2 mt-4"><button id="save-button" class="btn btn-primary" type="submit">Save item</button><button id="cancel-button" class="btn btn-outline-secondary d-none" type="button">Cancel edit</button></div>
+			</form>
+		</section>
+
+		<section class="panel"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="mb-0">Current items</h2><span id="count" class="badge text-bg-light">0 / 8</span></div><div id="featured-list" class="featured-list"></div></section>
+	</main>
+	<script>
+		(() => {
+			const configuredPin = String(window.STORE_CONFIG?.adminPin || '');
+			const gateForm = document.querySelector('#admin-gate-form');
+			const gateInput = document.querySelector('#admin-pin');
+			const gateError = document.querySelector('#gate-error');
+			const gateKey = 'chypaul.adminUnlocked';
+			const unlock = () => { document.body.classList.remove('admin-locked'); sessionStorage.setItem(gateKey, '1'); gateInput.value = ''; };
+			if (sessionStorage.getItem(gateKey) === '1') unlock();
+			gateForm.addEventListener('submit', (event) => { event.preventDefault(); if (/^\d{4}$/.test(configuredPin) && gateInput.value === configuredPin) { unlock(); } else { gateError.textContent = 'Incorrect four-digit access code.'; gateInput.select(); } });
+
+			const apiUrl = 'public/featured.php';
+			const form = document.querySelector('#featured-form');
+			const list = document.querySelector('#featured-list');
+			const status = document.querySelector('#status');
+			const count = document.querySelector('#count');
+			const formTitle = document.querySelector('#form-title');
+			const saveButton = document.querySelector('#save-button');
+			const cancelButton = document.querySelector('#cancel-button');
+			let editingId = null;
+			let items = [];
+
+			const fields = ['title', 'category', 'label', 'description', 'sort_order', 'is_active'];
+			const setStatus = (message, error = false) => { status.textContent = message; status.className = `status ${error ? 'text-danger' : 'text-success'}`; };
+			const value = (name) => document.querySelector(`#${name}`).value.trim();
+
+			async function request(url = apiUrl, options = {}) {
+				const response = await fetch(url, { headers: { Accept: 'application/json' }, ...options });
+				const payload = await response.json();
+				if (!response.ok) { const error = new Error(payload.message || 'Request failed.'); error.payload = payload; throw error; }
+				return payload;
+			}
+
+			function resetForm() {
+				editingId = null; form.reset(); document.querySelector('#sort_order').value = Math.min(items.length + 1, 8); document.querySelector('#is_active').checked = true; formTitle.textContent = 'Add featured item'; saveButton.textContent = 'Save item'; cancelButton.classList.add('d-none');
+			}
+
+			function populateForm(item) {
+				editingId = item.id; fields.forEach((field) => { const input = document.querySelector(`#${field}`); if (field === 'is_active') input.checked = Boolean(item[field]); else input.value = item[field] ?? ''; }); formTitle.textContent = `Edit featured item #${item.id}`; saveButton.textContent = 'Update item'; cancelButton.classList.remove('d-none'); window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+
+			function render() {
+				count.textContent = `${items.length} / 8`;
+				list.replaceChildren();
+				items.sort((left, right) => Number(left.sort_order) - Number(right.sort_order)).forEach((item) => {
+					const card = document.createElement('article'); card.className = `featured-item${item.is_active ? '' : ' is-inactive'}`;
+					const image = document.createElement('img'); image.src = item.image; image.alt = item.title; image.loading = 'lazy';
+					const body = document.createElement('div'); body.className = 'featured-item-body';
+					body.innerHTML = '<div class="item-meta"><span></span><span></span></div><h3></h3><p></p><div class="d-flex gap-2"><button class="btn btn-sm btn-outline-primary edit" type="button">Edit</button><button class="btn btn-sm btn-outline-danger delete" type="button">Delete</button></div>';
+					body.querySelector('.item-meta span:first-child').textContent = item.category;
+					body.querySelector('.item-meta span:last-child').textContent = item.is_active ? `Order ${item.sort_order}` : 'Hidden';
+					body.querySelector('h3').textContent = item.title; body.querySelector('p').textContent = item.description;
+					body.querySelector('.edit').addEventListener('click', () => populateForm(item));
+					body.querySelector('.delete').addEventListener('click', async () => { if (!window.confirm(`Delete ${item.title}?`)) return; try { await request(`${apiUrl}?id=${item.id}`, { method: 'DELETE' }); setStatus('Item deleted.'); await load(); if (editingId === item.id) resetForm(); } catch (error) { setStatus(error.message, true); } });
+					card.append(image, body); list.appendChild(card);
+				});
+				for (let slot = items.length; slot < 8; slot += 1) {
+					const emptyCard = document.createElement('article'); emptyCard.className = 'featured-item d-flex flex-column justify-content-center align-items-center p-4 text-center';
+					emptyCard.innerHTML = '<i class="bi bi-plus-circle mb-2 fs-3 text-secondary"></i><strong>Empty slot</strong><span class="small text-muted mb-3">Add a featured item</span><button class="btn btn-sm btn-outline-primary" type="button">Add item</button>';
+					emptyCard.querySelector('button').addEventListener('click', () => { resetForm(); document.querySelector('#title').focus(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+					list.appendChild(emptyCard);
+				}
+			}
+
+			async function load() { try { const response = await request(`${apiUrl}?admin=1`); items = response.items || []; render(); } catch (error) { setStatus(error.message, true); } }
+
+			form.addEventListener('submit', async (event) => {
+				event.preventDefault();
+				const payload = new FormData();
+				['title', 'category', 'label', 'description', 'sort_order'].forEach((field) => payload.append(field, value(field)));
+				payload.append('is_active', String(document.querySelector('#is_active').checked));
+				if (editingId) payload.append('existing_image', items.find((item) => Number(item.id) === Number(editingId))?.image || '');
+				const imageFile = document.querySelector('#image').files[0];
+				if (imageFile) payload.append('image', imageFile);
+				if (editingId) payload.append('_method', 'PUT');
+				try { await request(editingId ? `${apiUrl}?id=${editingId}` : apiUrl, { method: 'POST', body: payload }); setStatus(editingId ? 'Item updated.' : 'Item added.'); resetForm(); await load(); } catch (error) { setStatus(error.message, true); }
+			});
+			cancelButton.addEventListener('click', resetForm); load();
+		})();
+	</script>
+</body>
+</html>

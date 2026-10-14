@@ -1,0 +1,72 @@
+[
+    {
+        "id": 1,
+        "title": "Paracetamol tablets",
+        "category": "PHARMACY",
+        "label": "Everyday care",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 5,
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "title": "Daily care toothpaste",
+        "category": "PERSONAL CARE",
+        "label": "Family essentials",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 2,
+        "is_active": true
+    },
+    {
+        "id": 4,
+        "title": "Multivitamin supplement",
+        "category": "WELLNESS",
+        "label": "Daily routine",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1550572017-edd951b55104?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 4,
+        "is_active": true
+    },
+    {
+        "id": 5,
+        "title": "Blood pressure monitor",
+        "category": "HEALTHCARE",
+        "label": "Home monitoring",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 5,
+        "is_active": true
+    },
+    {
+        "id": 6,
+        "title": "Hand sanitizer",
+        "category": "PERSONAL CARE",
+        "label": "Everyday hygiene",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1584483766114-2cea6facdf57?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 6,
+        "is_active": true
+    },
+    {
+        "id": 7,
+        "title": "Baby care essentials",
+        "category": "BABY CARE",
+        "label": "Gentle family care",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 7,
+        "is_active": true
+    },
+    {
+        "id": 8,
+        "title": "Herbal wellness tea",
+        "category": "WELLNESS",
+        "label": "Daily routine",
+        "description": "Ask for current price and availability.",
+        "image": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=900&q=85",
+        "sort_order": 8,
+        "is_active": true
+    }
+]

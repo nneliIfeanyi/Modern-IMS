@@ -1,6 +1,7 @@
 // Store-specific values live here. Replace placeholders before publishing.
 window.STORE_CONFIG = {
-    name: 'CHYPAUL',
+    name: 'ChyPaul',
+    adminPin: '1234',
     whatsappNumber: '2348060876176',
     phone: '+2348060876176',
     address: 'Ugbokpo Benue State',

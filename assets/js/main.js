@@ -6,7 +6,8 @@
     const fulfilment = document.querySelector('#fulfilment');
     const addressWrap = document.querySelector('#addressWrap');
     const addressInput = document.querySelector('#deliveryAddress');
-    const draftKey = 'medimart.orderDraft';
+    const draftKey = 'chypaul.orderDraft';
+    const legacyDraftKey = 'medimart.orderDraft';
 
     const setText = (key, value) => document.querySelectorAll(`[data-store="${key}"]`).forEach((node) => {
         node.textContent = value;
@@ -22,9 +23,79 @@
     document.querySelectorAll('[data-store="name"]').forEach((node) => node.textContent = config.name || 'Your Store');
     document.title = `${config.name || 'Your Store'} | Pharmacy & Supermarket`;
     document.querySelector('#copyrightYear').textContent = new Date().getFullYear();
+    document.querySelector('.trust-strip')?.remove();
+    document.querySelector('#order .order-intro ol')?.remove();
+    document.querySelector('.demo-note')?.remove();
+    document.querySelector('.hero-actions .btn-link')?.remove();
+    document.querySelector('.contact-section .section-heading > p')?.remove();
+
+    const heroImage = document.querySelector('.hero-visual img');
+    const heroSlides = [
+        {
+            src: 'assets/img/hero1.jpg',
+            alt: 'Pharmacist arranging healthcare products on a shelf'
+        },
+        {
+            src: 'assets/img/hero5.jpg',
+            alt: 'Bright pharmacy shelves stocked with healthcare products'
+        },
+        {
+            src: 'assets/img/hero2.jpg',
+            alt: 'Healthcare professional standing in a welcoming pharmacy'
+        }
+    ];
+
+    if (heroImage) {
+        let slideIndex = 0;
+        heroImage.src = heroSlides[0].src;
+        heroImage.alt = heroSlides[0].alt;
+        window.setInterval(() => {
+            heroImage.classList.add('is-changing');
+            window.setTimeout(() => {
+                slideIndex = (slideIndex + 1) % heroSlides.length;
+                heroImage.src = heroSlides[slideIndex].src;
+                heroImage.alt = heroSlides[slideIndex].alt;
+                heroImage.classList.remove('is-changing');
+            }, 450);
+        }, 5000);
+    }
+
+    async function loadFeaturedItems() {
+        const featuredGrid = document.querySelector('.featured-section .row');
+        if (!featuredGrid) return;
+
+        try {
+            const response = await fetch('public/featured.php', { headers: { Accept: 'application/json' } });
+            if (!response.ok) throw new Error('Featured items could not be loaded.');
+            const payload = await response.json();
+            featuredGrid.replaceChildren();
+
+            (payload.items || []).forEach((item) => {
+                const column = document.createElement('div');
+                column.className = 'col-sm-6 col-lg-3';
+                column.innerHTML = '<article class="product-card"><div class="product-image"><span></span></div><div class="product-body"><small></small><h3></h3><p></p><button class="btn btn-outline-primary w-100 add-product" type="button">Add to order</button></div></article>';
+                const image = column.querySelector('.product-image');
+                image.style.backgroundImage = `linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,.18)), url("${item.image}")`;
+                image.style.backgroundSize = 'cover';
+                image.style.backgroundPosition = 'center';
+                column.querySelector('.product-image span').textContent = item.category || '';
+                column.querySelector('.product-body small').textContent = item.label || '';
+                column.querySelector('.product-body h3').textContent = item.title || '';
+                column.querySelector('.product-body p').textContent = item.description || '';
+                column.querySelector('.add-product').dataset.product = item.title || '';
+                featuredGrid.appendChild(column);
+            });
+        } catch (error) {
+            featuredGrid.replaceChildren();
+        }
+    }
+
+    loadFeaturedItems();
 
     try {
-        orderText.value = localStorage.getItem(draftKey) || '';
+        const savedDraft = localStorage.getItem(draftKey) || localStorage.getItem(legacyDraftKey) || '';
+        orderText.value = savedDraft;
+        if (savedDraft && !localStorage.getItem(draftKey)) localStorage.setItem(draftKey, savedDraft);
     } catch (error) {
         // The form remains usable when storage is unavailable.
     }
