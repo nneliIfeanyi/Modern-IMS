@@ -23,11 +23,6 @@
     document.querySelectorAll('[data-store="name"]').forEach((node) => node.textContent = config.name || 'Your Store');
     document.title = `${config.name || 'Your Store'} | Pharmacy & Supermarket`;
     document.querySelector('#copyrightYear').textContent = new Date().getFullYear();
-    document.querySelector('.trust-strip')?.remove();
-    document.querySelector('#order .order-intro ol')?.remove();
-    document.querySelector('.demo-note')?.remove();
-    document.querySelector('.hero-actions .btn-link')?.remove();
-    document.querySelector('.contact-section .section-heading > p')?.remove();
 
     const heroImage = document.querySelector('.hero-visual img');
     const heroSlides = [
@@ -49,15 +44,27 @@
         let slideIndex = 0;
         heroImage.src = heroSlides[0].src;
         heroImage.alt = heroSlides[0].alt;
-        window.setInterval(() => {
+        heroSlides.slice(1).forEach((slide) => {
+            const image = new Image();
+            image.src = slide.src;
+        });
+
+        const changeHeroSlide = async () => {
+            const nextIndex = (slideIndex + 1) % heroSlides.length;
+            const nextSlide = heroSlides[nextIndex];
+            const nextImage = new Image();
+            nextImage.src = nextSlide.src;
+            try { await nextImage.decode(); } catch (error) { /* The browser can still display the image. */ }
             heroImage.classList.add('is-changing');
             window.setTimeout(() => {
-                slideIndex = (slideIndex + 1) % heroSlides.length;
+                slideIndex = nextIndex;
                 heroImage.src = heroSlides[slideIndex].src;
                 heroImage.alt = heroSlides[slideIndex].alt;
-                heroImage.classList.remove('is-changing');
-            }, 450);
-        }, 5000);
+                window.requestAnimationFrame(() => heroImage.classList.remove('is-changing'));
+            }, 800);
+        };
+
+        window.setInterval(changeHeroSlide, 5000);
     }
 
     async function loadFeaturedItems() {
@@ -111,14 +118,16 @@
         if (!delivery) addressInput.value = '';
     });
 
-    document.querySelectorAll('.add-product').forEach((button) => button.addEventListener('click', () => {
+    document.querySelector('.featured-section .row')?.addEventListener('click', (event) => {
+        const button = event.target.closest('.add-product');
+        if (!button) return;
         const product = button.dataset.product;
         const addition = `${orderText.value.trim() ? '\n' : ''}- ${product} — quantity: `;
         orderText.value += addition;
         orderText.dispatchEvent(new Event('input'));
         orderText.focus();
         document.querySelector('#order').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }));
+    });
 
     document.querySelectorAll('[data-category]').forEach((button) => button.addEventListener('click', () => {
         const category = button.dataset.category;
