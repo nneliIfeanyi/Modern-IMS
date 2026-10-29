@@ -6,6 +6,16 @@ const els = {
     profileForm: document.getElementById('profile-form'),
     fullName: document.getElementById('profile-full-name'),
     email: document.getElementById('profile-email'),
+    userManagementSection: document.getElementById('user-management-section'),
+    userForm: document.getElementById('user-form'),
+    userFullName: document.getElementById('user-full-name'),
+    userEmail: document.getElementById('user-email'),
+    userRole: document.getElementById('user-role'),
+    userPassword: document.getElementById('user-password'),
+    userSubmitBtn: document.getElementById('user-submit-btn'),
+    userCancelBtn: document.getElementById('user-cancel-btn'),
+    usersTableBody: document.getElementById('users-table-body'),
+    usersEmpty: document.getElementById('users-empty'),
     appSettingsForm: document.getElementById('app-settings-form'),
     siteName: document.getElementById('app-site-name'),
     themeColor: document.getElementById('app-theme-color'),
@@ -27,6 +37,11 @@ const els = {
 
 const state = {
     editingCategoryId: null,
+    editingUserId: null,
+    currentUserId: null,
+    currentRole: '',
+    users: [],
+    roles: [],
 };
 
 const toast = new bootstrap.Toast(els.toastEl);
@@ -66,6 +81,126 @@ async function loadProfile() {
     els.fullName.value = user.full_name || '';
     els.email.value = user.email || '';
     els.roleBadge.textContent = (user.role || 'unknown').toUpperCase();
+}
+
+function resetUserForm() {
+    state.editingUserId = null;
+    els.userForm.reset();
+    els.userPassword.required = true;
+    els.userSubmitBtn.textContent = 'Create user';
+    els.userCancelBtn.classList.add('d-none');
+    clearErrors(els.userForm);
+}
+
+function renderUsers(users) {
+    state.users = users;
+    els.usersTableBody.replaceChildren();
+    els.usersEmpty.classList.toggle('d-none', users.length > 0);
+
+    users.forEach((user) => {
+        const row = document.createElement('tr');
+        const name = document.createElement('td');
+        const email = document.createElement('td');
+        const role = document.createElement('td');
+        const status = document.createElement('td');
+        const actions = document.createElement('td');
+        const editButton = document.createElement('button');
+        const statusButton = document.createElement('button');
+        const isActive = Number(user.is_active) === 1;
+
+        name.textContent = user.full_name;
+        email.textContent = user.email;
+        role.textContent = user.role_name;
+        status.textContent = isActive ? 'Active' : 'Inactive';
+        actions.className = 'text-end text-nowrap';
+
+        editButton.type = 'button';
+        editButton.className = 'btn btn-sm btn-outline-primary me-1';
+        editButton.dataset.action = 'edit-user';
+        editButton.dataset.userId = String(user.id);
+        editButton.textContent = 'Edit';
+
+        statusButton.type = 'button';
+        statusButton.className = `btn btn-sm ${isActive ? 'btn-outline-danger' : 'btn-outline-success'}`;
+        statusButton.dataset.action = 'toggle-user';
+        statusButton.dataset.userId = String(user.id);
+        statusButton.textContent = isActive ? 'Deactivate' : 'Reactivate';
+        if (Number(user.id) === state.currentUserId) {
+            statusButton.disabled = true;
+            statusButton.title = 'You cannot change your own account status here.';
+        }
+
+        actions.append(editButton, statusButton);
+        row.append(name, email, role, status, actions);
+        els.usersTableBody.append(row);
+    });
+}
+
+async function loadUsers() {
+    const response = await apiRequest('/settings/users', { method: 'GET' });
+    renderUsers(response.data || []);
+}
+
+async function loadRoles() {
+    const response = await apiRequest('/settings/roles', { method: 'GET' });
+    state.roles = response.data || [];
+    els.userRole.replaceChildren();
+    state.roles.forEach((role) => {
+        const option = document.createElement('option');
+        option.value = String(role.id);
+        option.textContent = role.name;
+        els.userRole.append(option);
+    });
+}
+
+function startUserEdit(user) {
+    state.editingUserId = Number(user.id);
+    els.userFullName.value = user.full_name || '';
+    els.userEmail.value = user.email || '';
+    els.userRole.value = String(user.role_id);
+    els.userPassword.value = '';
+    els.userPassword.required = false;
+    els.userSubmitBtn.textContent = 'Update user';
+    els.userCancelBtn.classList.remove('d-none');
+    clearErrors(els.userForm);
+    els.userFullName.focus();
+}
+
+async function toggleUserStatus(user) {
+    const isActive = Number(user.is_active) === 1;
+    const confirmed = await confirmAction({
+        title: isActive ? 'Deactivate user' : 'Reactivate user',
+        message: isActive
+            ? `Deactivate ${user.full_name}'s account? They will no longer be able to sign in.`
+            : `Reactivate ${user.full_name}'s account?`,
+        confirmLabel: isActive ? 'Deactivate user' : 'Reactivate user',
+    });
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        if (isActive) {
+            await apiRequest(`/settings/users/${user.id}`, { method: 'DELETE' });
+        } else {
+            await apiRequest(`/settings/users/${user.id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    full_name: user.full_name,
+                    email: user.email,
+                    role_id: Number(user.role_id),
+                    is_active: true,
+                }),
+            });
+        }
+        if (state.editingUserId === Number(user.id)) {
+            resetUserForm();
+        }
+        await loadUsers();
+        showToast(isActive ? 'User deactivated.' : 'User reactivated.');
+    } catch (error) {
+        showToast(error.message || 'Failed to change user status.', 'danger');
+    }
 }
 
 async function loadAppSettings() {
@@ -167,19 +302,61 @@ function applyAppSettingsPreview(siteName, themeColor) {
     }
 
     if (themeColor) {
-        const red = Number.parseInt(themeColor.slice(1, 3), 16);
-        const green = Number.parseInt(themeColor.slice(3, 5), 16);
-        const blue = Number.parseInt(themeColor.slice(5, 7), 16);
-        const root = document.documentElement;
-        root.style.setProperty('--ims-primary', themeColor);
-        root.style.setProperty('--ims-primary-rgb', `${red}, ${green}, ${blue}`);
-        root.style.setProperty('--bs-primary', themeColor);
-        root.style.setProperty('--bs-primary-rgb', `${red}, ${green}, ${blue}`);
-        root.style.setProperty('--bs-focus-ring-color', `rgba(${red}, ${green}, ${blue}, 0.25)`);
+        window.applyImsTheme(themeColor);
     }
 }
 
 function bindEvents() {
+    els.userForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearErrors(els.userForm);
+
+        const payload = {
+            full_name: els.userFullName.value.trim(),
+            email: els.userEmail.value.trim(),
+            role_id: Number(els.userRole.value),
+        };
+        const editedUser = state.users.find((user) => Number(user.id) === state.editingUserId);
+        if (editedUser) {
+            payload.is_active = Number(editedUser.is_active) === 1;
+        }
+        if (els.userPassword.value !== '') {
+            payload.password = els.userPassword.value;
+        }
+
+        const editingId = state.editingUserId;
+        try {
+            await apiRequest(editingId ? `/settings/users/${editingId}` : '/settings/users', {
+                method: editingId ? 'PUT' : 'POST',
+                body: JSON.stringify(payload),
+            });
+            resetUserForm();
+            await loadUsers();
+            showToast(editingId ? 'User updated.' : 'User created.');
+        } catch (error) {
+            applyErrors(els.userForm, error?.response?.data?.fields || {});
+            showToast(error.message || 'Failed to save user.', 'danger');
+        }
+    });
+
+    els.userCancelBtn.addEventListener('click', resetUserForm);
+    els.usersTableBody.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) {
+            return;
+        }
+
+        const user = state.users.find((item) => Number(item.id) === Number(button.dataset.userId));
+        if (!user) {
+            return;
+        }
+        if (button.dataset.action === 'edit-user') {
+            startUserEdit(user);
+        } else if (button.dataset.action === 'toggle-user') {
+            toggleUserStatus(user);
+        }
+    });
+
     els.categoryForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         clearErrors(els.categoryForm);
@@ -311,7 +488,9 @@ function bindEvents() {
 async function init() {
     try {
         const me = await getCurrentUser();
+        state.currentUserId = Number(me.data?.id || 0);
         const role = (me.data?.role || '').toLowerCase();
+        state.currentRole = role;
         if (role !== 'admin' && role !== 'manager') {
             showToast('Settings are restricted to admin or manager roles.', 'danger');
             setTimeout(() => {
@@ -330,6 +509,11 @@ async function init() {
         await loadProfile();
         await loadAppSettings();
         await loadCategories();
+        if (state.currentRole === 'admin') {
+            els.userManagementSection.classList.remove('d-none');
+            await Promise.all([loadRoles(), loadUsers()]);
+            els.userPassword.required = true;
+        }
         applyAppSettingsPreview(els.siteName.value, els.themeColor.value);
     } catch (error) {
         showToast(error.message || 'Failed to load profile.', 'danger');
