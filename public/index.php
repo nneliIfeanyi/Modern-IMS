@@ -17,6 +17,7 @@ use App\Controllers\SalesOrderController;
 use App\Controllers\SupplierController;
 use App\Controllers\PurchaseOrderController;
 use App\Controllers\WarehouseController;
+use App\Controllers\WhatsAppWebhookController;
 use App\Core\Database;
 use App\Core\Env;
 use App\Core\Request;
@@ -81,6 +82,8 @@ $request = Request::capture();
 $router = new Router();
 
 $router->add('GET', '/api/ping', [PingController::class, 'index'], [CorsMiddleware::class]);
+$router->add('GET', '/api/whatsapp/webhook', [WhatsAppWebhookController::class, 'verify']);
+$router->add('POST', '/api/whatsapp/webhook', [WhatsAppWebhookController::class, 'receive']);
 $router->add('POST', '/api/auth/login', [AuthController::class, 'login'], [CorsMiddleware::class]);
 $router->add('POST', '/api/auth/logout', [AuthController::class, 'logout'], [CorsMiddleware::class, AuthMiddleware::class]);
 $router->add('GET', '/api/auth/me', [AuthController::class, 'me'], [CorsMiddleware::class, 'auth']);
@@ -138,6 +141,11 @@ $router->add('GET', '/api/reports/low-stock', [ReportsController::class, 'lowSto
 $router->add('GET', '/api/settings/profile', [SettingsController::class, 'profile'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 $router->add('PUT', '/api/settings/profile', [SettingsController::class, 'updateProfile'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 $router->add('PUT', '/api/settings/password', [SettingsController::class, 'updatePassword'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('GET', '/api/settings/roles', [SettingsController::class, 'roles'], [CorsMiddleware::class, 'auth', 'role:admin']);
+$router->add('GET', '/api/settings/users', [SettingsController::class, 'users'], [CorsMiddleware::class, 'auth', 'role:admin']);
+$router->add('POST', '/api/settings/users', [SettingsController::class, 'createUser'], [CorsMiddleware::class, 'auth', 'role:admin']);
+$router->add('PUT', '/api/settings/users/{id}', [SettingsController::class, 'updateUser'], [CorsMiddleware::class, 'auth', 'role:admin']);
+$router->add('DELETE', '/api/settings/users/{id}', [SettingsController::class, 'deactivateUser'], [CorsMiddleware::class, 'auth', 'role:admin']);
 $router->add('GET', '/api/settings/app', [AppSettingsController::class, 'show'], [CorsMiddleware::class, 'auth']);
 $router->add('PUT', '/api/settings/app', [AppSettingsController::class, 'update'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 

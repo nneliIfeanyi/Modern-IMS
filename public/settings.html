@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
         rel="stylesheet">
+    <script src="assets/js/theme-init.js"></script>
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/css/app-shell.css" rel="stylesheet">
@@ -52,6 +53,57 @@
                     </div>
                 </form>
             </div>
+
+            <section id="user-management-section" class="shell-card p-3 mb-3 d-none">
+                <div class="mb-3">
+                    <h2 class="h5 mb-0">User Management</h2>
+                    <p class="text-muted small mb-0">Create accounts, assign roles, and manage access.</p>
+                </div>
+
+                <form id="user-form" class="row g-3 mb-3" novalidate>
+                    <div class="col-md-3">
+                        <label for="user-full-name" class="form-label">Full name</label>
+                        <input id="user-full-name" name="full_name" class="form-control" type="text" maxlength="120" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="user-email" class="form-label">Email</label>
+                        <input id="user-email" name="email" class="form-control" type="email" maxlength="190" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="user-role" class="form-label">Role</label>
+                        <select id="user-role" name="role_id" class="form-select" required></select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="user-password" class="form-label">Password</label>
+                        <input id="user-password" name="password" class="form-control" type="password" minlength="8">
+                        <div class="form-text">Required for new users; leave blank to keep the current password.</div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-12 d-flex gap-2">
+                        <button id="user-submit-btn" class="btn btn-primary" type="submit">Create user</button>
+                        <button id="user-cancel-btn" class="btn btn-outline-secondary d-none" type="button">Cancel edit</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body"></tbody>
+                    </table>
+                </div>
+                <p id="users-empty" class="text-muted small mb-0 mt-3 d-none">No users found.</p>
+            </section>
 
             <div class="shell-card p-3 mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">

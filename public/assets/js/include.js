@@ -127,15 +127,7 @@ async function applyAppSettings() {
         }
 
         if (/^#[0-9a-fA-F]{6}$/.test(themeColor)) {
-            const red = Number.parseInt(themeColor.slice(1, 3), 16);
-            const green = Number.parseInt(themeColor.slice(3, 5), 16);
-            const blue = Number.parseInt(themeColor.slice(5, 7), 16);
-            const root = document.documentElement;
-            root.style.setProperty('--ims-primary', themeColor);
-            root.style.setProperty('--ims-primary-rgb', `${red}, ${green}, ${blue}`);
-            root.style.setProperty('--bs-primary', themeColor);
-            root.style.setProperty('--bs-primary-rgb', `${red}, ${green}, ${blue}`);
-            root.style.setProperty('--bs-focus-ring-color', `rgba(${red}, ${green}, ${blue}, 0.25)`);
+            window.applyImsTheme(themeColor);
         }
     } catch (error) {
         // Keep shell rendering even when settings fetch fails.
