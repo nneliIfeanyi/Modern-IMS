@@ -10,15 +10,20 @@ const state = {
     movementDateFrom: '',
     movementDateTo: '',
     lowStockSearch: '',
+    expiryWindow: '90',
 };
 
 const els = {
+    movementRecapGrid: document.getElementById('movement-recap-grid'),
     valuationBody: document.getElementById('valuation-body'),
     valuationMeta: document.getElementById('valuation-meta'),
     valuationSearch: document.getElementById('valuation-search'),
     lowStockBody: document.getElementById('low-stock-body'),
     lowStockMeta: document.getElementById('low-stock-meta'),
     lowStockSearch: document.getElementById('low-stock-search'),
+    expiryBody: document.getElementById('expiry-body'),
+    expiryMeta: document.getElementById('expiry-meta'),
+    expiryWindow: document.getElementById('expiry-window'),
     movementBody: document.getElementById('movement-body'),
     movementMeta: document.getElementById('movement-meta'),
     movementSearch: document.getElementById('movement-search'),
@@ -66,6 +71,174 @@ function formatDate(value) {
         hour: '2-digit',
         minute: '2-digit',
     }).format(date);
+}
+
+function formatDateOnly(value) {
+    if (!value) {
+        return '-';
+    }
+
+    const date = new Date(`${value}T00:00:00`);
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }).format(date);
+}
+
+function formatDateRange(from, to) {
+    if (!from || !to) {
+        return 'No date range';
+    }
+
+    return from === to ? formatDateOnly(from) : `${formatDateOnly(from)} – ${formatDateOnly(to)}`;
+}
+
+function formatQuantity(value, signed = false) {
+    const quantity = Number(value || 0);
+    const formatted = new Intl.NumberFormat('en-NG', {
+        maximumFractionDigits: 2,
+    }).format(quantity);
+
+    return `${signed && quantity > 0 ? '+' : ''}${formatted} units`;
+}
+
+function renderMovementRecap(data) {
+    const periods = [
+        ['daily', 'Today'],
+        ['weekly', 'Week to date'],
+        ['monthly', 'Month to date'],
+    ];
+    const metrics = [
+        ['entry_count', 'Movement entries', (value) => new Intl.NumberFormat('en-NG').format(Number(value || 0))],
+        ['stock_in', 'Stock in', (value) => formatQuantity(value)],
+        ['stock_out', 'Stock out', (value) => formatQuantity(value)],
+        ['adjustment_net', 'Net adjustment', (value) => formatQuantity(value, true)],
+        ['transferred', 'Transferred', (value) => formatQuantity(value)],
+    ];
+
+    els.movementRecapGrid.replaceChildren();
+
+    periods.forEach(([key, title]) => {
+        const period = data[key];
+        const column = document.createElement('div');
+        const card = document.createElement('div');
+        const heading = document.createElement('div');
+        const label = document.createElement('h3');
+        const range = document.createElement('p');
+        const previousRange = document.createElement('p');
+
+        column.className = 'col-12 col-lg-4';
+        card.className = 'border rounded-3 h-100 p-3';
+        heading.className = 'd-flex justify-content-between align-items-start gap-2 mb-2';
+        label.className = 'h6 mb-0';
+        label.textContent = period?.label || title;
+        range.className = 'small text-muted text-end mb-0';
+        range.textContent = formatDateRange(period?.current?.from, period?.current?.to);
+        previousRange.className = 'small text-muted mb-2';
+        previousRange.textContent = `Previous: ${formatDateRange(period?.previous?.from, period?.previous?.to)}`;
+
+        heading.append(label, range);
+        card.append(heading, previousRange);
+
+        metrics.forEach(([metricKey, metricLabel, formatValue]) => {
+            const row = document.createElement('div');
+            const name = document.createElement('span');
+            const valueGroup = document.createElement('div');
+            const value = document.createElement('span');
+            const previousValue = document.createElement('span');
+
+            row.className = 'd-flex justify-content-between align-items-start gap-3 py-2 border-top';
+            name.className = 'small text-muted';
+            name.textContent = metricLabel;
+            valueGroup.className = 'text-end';
+            value.className = 'small fw-semibold d-block';
+            value.textContent = formatValue(period?.current?.metrics?.[metricKey]);
+            previousValue.className = 'small text-muted d-block';
+            previousValue.textContent = `Prev: ${formatValue(period?.previous?.metrics?.[metricKey])}`;
+            valueGroup.append(value, previousValue);
+            row.append(name, valueGroup);
+            card.appendChild(row);
+        });
+
+        column.appendChild(card);
+        els.movementRecapGrid.appendChild(column);
+    });
+}
+
+function renderExpiringStock(data) {
+    const items = data.items || [];
+    const summary = data.summary || {};
+    els.expiryBody.replaceChildren();
+
+    if (!data.tracking_enabled) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 8;
+        cell.className = 'text-muted';
+        cell.textContent = 'Expiry tracking is disabled. Enable expiry tracking to see batch expiry data.';
+        row.appendChild(cell);
+        els.expiryBody.appendChild(row);
+        els.expiryMeta.textContent = 'Expiry tracking is disabled.';
+        return;
+    }
+
+    if (items.length === 0) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 8;
+        cell.className = 'text-muted';
+        cell.textContent = `No expired or expiring batches in the next ${Number(data.days || 90)} days.`;
+        row.appendChild(cell);
+        els.expiryBody.appendChild(row);
+    } else {
+        const statusLabels = {
+            expired: ['Expired', 'text-bg-danger'],
+            '0-30': ['0-30 days', 'text-bg-warning'],
+            '31-60': ['31-60 days', 'text-bg-info'],
+            '61-90': ['61-90 days', 'text-bg-secondary'],
+        };
+
+        items.forEach((item) => {
+            const row = document.createElement('tr');
+            const statusCell = document.createElement('td');
+            const badge = document.createElement('span');
+            const values = [
+                item.sku || '-',
+                item.product_name || '-',
+                item.batch_number || '-',
+                item.warehouse_name || '-',
+                formatQuantity(item.quantity),
+                formatDateOnly(item.expiry_date),
+            ];
+            const status = statusLabels[item.expiry_bucket] || ['Unknown', 'text-bg-secondary'];
+
+            badge.className = `badge ${status[1]}`;
+            badge.textContent = status[0];
+            statusCell.appendChild(badge);
+            row.appendChild(statusCell);
+
+            values.forEach((value) => {
+                const cell = document.createElement('td');
+                cell.textContent = String(value);
+                row.appendChild(cell);
+            });
+
+            const remainingCell = document.createElement('td');
+            const daysRemaining = Number(item.days_remaining);
+            remainingCell.textContent = daysRemaining < 0
+                ? `${Math.abs(daysRemaining)} days overdue`
+                : daysRemaining === 0 ? 'Expires today' : `${daysRemaining} days`;
+            row.appendChild(remainingCell);
+            els.expiryBody.appendChild(row);
+        });
+    }
+
+    els.expiryMeta.textContent = `${Number(summary.expired_batch_count || 0)} expired batches | ${Number(summary.expiring_batch_count || 0)} upcoming batches | ${formatQuantity(summary.total_quantity || 0)} in listed batches`;
 }
 
 async function loadWarehouses() {
@@ -226,6 +399,17 @@ async function loadMovements() {
     renderMovements(response.data || { items: [], meta: {} });
 }
 
+async function loadMovementRecap() {
+    const response = await apiRequest('/reports/movement-recap', { method: 'GET' });
+    renderMovementRecap(response.data || {});
+}
+
+async function loadExpiringStock() {
+    const params = new URLSearchParams({ days: state.expiryWindow });
+    const response = await apiRequest(`/reports/expiring-stock?${params.toString()}`, { method: 'GET' });
+    renderExpiringStock(response.data || { tracking_enabled: false, items: [] });
+}
+
 function bindEvents() {
     let valuationTimer = null;
     let lowStockTimer = null;
@@ -280,6 +464,11 @@ function bindEvents() {
         await loadMovements();
     });
 
+    els.expiryWindow.addEventListener('change', async () => {
+        state.expiryWindow = els.expiryWindow.value;
+        await loadExpiringStock();
+    });
+
     els.movementPrev.addEventListener('click', async () => {
         if (state.movementPage <= 1) {
             return;
@@ -325,6 +514,8 @@ async function init() {
             loadValuation(),
             loadLowStock(),
             loadMovements(),
+            loadMovementRecap(),
+            loadExpiringStock(),
         ]);
     } catch (error) {
         showToast(error.message || 'Failed to load reports.', 'danger');

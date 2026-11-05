@@ -207,7 +207,7 @@ async function loadAppSettings() {
     const response = await apiRequest('/settings/app', { method: 'GET' });
     const settings = response.data || {};
 
-    els.siteName.value = settings.site_name || 'ANTOBELL IMS';
+    els.siteName.value = settings.site_name || 'CHYPAUL IMS';
     els.themeColor.value = settings.theme_color || '#0d6efd';
 }
 

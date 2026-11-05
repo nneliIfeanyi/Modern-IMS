@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports | ANTOBELL IMS</title>
+    <meta name="theme-color" content="#1769d2">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>Reports | CHYPAUL IMS</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700&family=Open+Sans:wght@400;600&display=swap"
         rel="stylesheet">
     <script src="assets/js/theme-init.js"></script>
+    <script src="assets/js/pwa.js" defer></script>
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="assets/css/app-shell.css" rel="stylesheet">
@@ -22,7 +25,7 @@
             <div class="page-head d-flex justify-content-between align-items-start">
                 <div>
                     <h1>Reports</h1>
-                    <p>Stock valuation, movement history, and low-stock exports.</p>
+                    <p>Movement recaps, stock valuation, movement history, near-expiry, and low-stock reports.</p>
                 </div>
                 <button id="export-csv-btn" class="btn btn-primary">Export movement CSV</button>
             </div>
@@ -40,6 +43,17 @@
                     </div>
                 </div>
             </div>
+
+            <section class="shell-card p-3 mb-3" aria-labelledby="movement-recap-title">
+                <div class="mb-3">
+                    <h2 id="movement-recap-title" class="h5 mb-1">Stock movement recap</h2>
+                    <p class="small text-muted mb-0">Today, week-to-date, and month-to-date compared with the previous equivalent period.</p>
+                </div>
+                <div id="movement-recap-grid" class="row g-3">
+                    <div class="col-12 text-muted">Loading movement recap...</div>
+                </div>
+                <p class="small text-muted mt-3 mb-0">Transfer quantity counts the source leg once. Movement entries include both warehouse legs of a transfer.</p>
+            </section>
 
             <div class="shell-card p-3 mb-3">
                 <h2 class="h5 mb-2">Stock valuation</h2>
@@ -128,6 +142,45 @@
                     </div>
                 </div>
             </div>
+
+            <section class="shell-card p-3 mb-3" aria-labelledby="expiring-stock-title">
+                <div class="d-flex flex-wrap align-items-end gap-3 mb-2">
+                    <div class="me-auto">
+                        <h2 id="expiring-stock-title" class="h5 mb-1">Expiring stock</h2>
+                        <p class="small text-muted mb-0">Expired batches and active stock approaching its expiry date.</p>
+                    </div>
+                    <div>
+                        <label class="form-label mb-1" for="expiry-window">Look ahead</label>
+                        <select id="expiry-window" class="form-select form-select-sm">
+                            <option value="30">Next 30 days</option>
+                            <option value="60">Next 60 days</option>
+                            <option value="90" selected>Next 90 days</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>SKU</th>
+                                <th>Product</th>
+                                <th>Batch</th>
+                                <th>Warehouse</th>
+                                <th>Quantity</th>
+                                <th>Expiry date</th>
+                                <th>Time remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expiry-body">
+                            <tr>
+                                <td colspan="8" class="text-muted">Loading expiry report...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="expiry-meta" class="mb-0 mt-2 text-muted">Loading...</p>
+            </section>
 
             <div class="shell-card p-3">
                 <h2 class="h5 mb-2">Low-stock</h2>

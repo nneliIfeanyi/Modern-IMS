@@ -86,6 +86,42 @@ body {
     overflow-y: auto;
 }
 
+.pwa-install-dialog {
+    width: min(28rem, calc(100vw - 2rem));
+    padding: 1.5rem;
+    border: 1px solid var(--ims-border);
+    border-radius: 1rem;
+    color: var(--ims-text);
+    box-shadow: 0 24px 70px rgba(27, 46, 78, 0.2);
+}
+
+.pwa-install-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+}
+
+.pwa-install-dialog h2 {
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.pwa-install-dialog p,
+.pwa-install-dialog li {
+    color: var(--ims-muted);
+    line-height: 1.55;
+}
+
+.pwa-install-dialog ul {
+    padding-left: 1.25rem;
+}
+
+.pwa-install-dialog form {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
 .sms-log-item {
     border-bottom: 1px solid var(--ims-border);
     padding: 0.75rem 1rem;
@@ -182,7 +218,17 @@ body {
 
 @media (min-width: 768px) {
     .app-sidebar.offcanvas-md {
-        position: static;
+        position: fixed;
+        top: var(--ims-header-height);
+        right: auto;
+        bottom: 0;
+        left: 0;
+        z-index: 1030;
+        display: block;
+        width: var(--ims-sidebar-width);
+        height: calc(100vh - var(--ims-header-height));
+        overflow-x: hidden;
+        overflow-y: auto;
         visibility: visible;
         transform: none;
     }
@@ -192,7 +238,7 @@ body {
     }
 
     .app-sidebar.offcanvas-md .offcanvas-body {
-        overflow-y: auto;
+        overflow: visible;
     }
 
     .app-sidebar {
@@ -200,9 +246,18 @@ body {
         transition: width 180ms ease, flex-basis 180ms ease;
     }
 
+    .app-main {
+        margin-left: var(--ims-sidebar-width);
+        transition: margin-left 180ms ease;
+    }
+
     .app-body.sidebar-collapsed .app-sidebar {
         flex-basis: var(--ims-sidebar-width-collapsed);
         width: var(--ims-sidebar-width-collapsed);
+    }
+
+    .app-body.sidebar-collapsed .app-main {
+        margin-left: var(--ims-sidebar-width-collapsed);
     }
 
     .app-body.sidebar-collapsed .app-sidebar .nav-link {

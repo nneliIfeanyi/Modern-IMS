@@ -5,10 +5,178 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Core\Database;
+use App\Core\ExpiryTracking;
 use PDO;
 
 final class ReportsModel
 {
+    public function movementRecap(): array
+    {
+        $today = new \DateTimeImmutable('today');
+        $tomorrow = $today->modify('+1 day');
+        $weekStart = $today->modify('monday this week');
+        $monthStart = $today->modify('first day of this month');
+        $previousMonthStart = $monthStart->modify('-1 month');
+        $previousMonthDays = (int) $previousMonthStart->format('t');
+        $previousMonthEnd = $previousMonthStart->modify('+' . min((int) $today->format('j'), $previousMonthDays) . ' days');
+
+        $periods = [
+            'daily' => [
+                'label' => 'Today',
+                'current' => [$today, $tomorrow],
+                'previous' => [$today->modify('-1 day'), $today],
+            ],
+            'weekly' => [
+                'label' => 'Week to date',
+                'current' => [$weekStart, $tomorrow],
+                'previous' => [$weekStart->modify('-7 days'), $tomorrow->modify('-7 days')],
+            ],
+            'monthly' => [
+                'label' => 'Month to date',
+                'current' => [$monthStart, $tomorrow],
+                'previous' => [$previousMonthStart, $previousMonthEnd],
+            ],
+        ];
+
+        $rangeQueries = [];
+        $params = [];
+        foreach ($periods as $periodKey => $period) {
+            foreach (['current', 'previous'] as $comparison) {
+                $rangeKey = $periodKey . '_' . $comparison;
+                [$rangeStart, $rangeEnd] = $period[$comparison];
+                $rangeQueries[] = "SELECT '{$rangeKey}' AS period_key, :{$rangeKey}_start AS range_start, :{$rangeKey}_end AS range_end";
+                $params[$rangeKey . '_start'] = $rangeStart->format('Y-m-d');
+                $params[$rangeKey . '_end'] = $rangeEnd->format('Y-m-d');
+            }
+        }
+
+        $sql = 'SELECT
+                    report_period.period_key,
+                    COUNT(sm.id) AS entry_count,
+                    COALESCE(SUM(CASE WHEN sm.movement_type = \'in\' THEN sm.quantity ELSE 0 END), 0) AS stock_in,
+                    COALESCE(SUM(CASE WHEN sm.movement_type = \'out\' THEN ABS(sm.quantity) ELSE 0 END), 0) AS stock_out,
+                    COALESCE(SUM(CASE WHEN sm.movement_type = \'adjustment\' THEN sm.quantity ELSE 0 END), 0) AS adjustment_net,
+                    COALESCE(SUM(CASE WHEN sm.movement_type = \'transfer\' AND sm.warehouse_id = sm.source_warehouse_id
+                        THEN ABS(sm.quantity) ELSE 0 END), 0) AS transferred
+                FROM (' . implode(' UNION ALL ', $rangeQueries) . ') report_period
+                LEFT JOIN stock_movements sm
+                    ON sm.created_at >= report_period.range_start
+                    AND sm.created_at < report_period.range_end
+                GROUP BY report_period.period_key';
+
+        $stmt = Database::connection()->prepare($sql);
+        $stmt->execute($params);
+
+        $metrics = [];
+        foreach ($stmt->fetchAll() ?: [] as $row) {
+            $metrics[(string) $row['period_key']] = [
+                'entry_count' => (int) $row['entry_count'],
+                'stock_in' => (float) $row['stock_in'],
+                'stock_out' => (float) $row['stock_out'],
+                'adjustment_net' => (float) $row['adjustment_net'],
+                'transferred' => (float) $row['transferred'],
+            ];
+        }
+
+        $result = [];
+        foreach ($periods as $periodKey => $period) {
+            $currentKey = $periodKey . '_current';
+            $previousKey = $periodKey . '_previous';
+            [$currentStart, $currentEnd] = $period['current'];
+            [$previousStart, $previousEnd] = $period['previous'];
+            $result[$periodKey] = [
+                'label' => $period['label'],
+                'current' => [
+                    'from' => $currentStart->format('Y-m-d'),
+                    'to' => $currentEnd->modify('-1 day')->format('Y-m-d'),
+                    'metrics' => $metrics[$currentKey] ?? [],
+                ],
+                'previous' => [
+                    'from' => $previousStart->format('Y-m-d'),
+                    'to' => $previousEnd->modify('-1 day')->format('Y-m-d'),
+                    'metrics' => $metrics[$previousKey] ?? [],
+                ],
+            ];
+        }
+
+        return $result;
+    }
+
+    public function expiringStock(int $days = 90): array
+    {
+        if (!ExpiryTracking::enabled()) {
+            return [
+                'tracking_enabled' => false,
+                'days' => $days,
+                'items' => [],
+                'summary' => [
+                    'batch_count' => 0,
+                    'expired_batch_count' => 0,
+                    'expiring_batch_count' => 0,
+                    'total_quantity' => 0,
+                ],
+            ];
+        }
+
+        $days = in_array($days, [30, 60, 90], true) ? $days : 90;
+        $today = new \DateTimeImmutable('today');
+        $cutoff = $today->modify('+' . $days . ' days');
+
+        $sql = 'SELECT
+                    b.id,
+                    b.batch_number,
+                    b.expiry_date,
+                    b.quantity,
+                    DATEDIFF(b.expiry_date, report_date.today) AS days_remaining,
+                    CASE
+                        WHEN b.expiry_date < report_date.today THEN \'expired\'
+                        WHEN b.expiry_date <= DATE_ADD(report_date.today, INTERVAL 30 DAY) THEN \'0-30\'
+                        WHEN b.expiry_date <= DATE_ADD(report_date.today, INTERVAL 60 DAY) THEN \'31-60\'
+                        ELSE \'61-90\'
+                    END AS expiry_bucket,
+                    p.sku,
+                    p.name AS product_name,
+                    w.name AS warehouse_name
+                FROM inventory_batches b
+                INNER JOIN products p ON p.id = b.product_id AND p.is_active = 1
+                INNER JOIN warehouses w ON w.id = b.warehouse_id
+                CROSS JOIN (SELECT :today AS today) report_date
+                WHERE b.status = \'active\'
+                  AND b.quantity > 0
+                  AND b.expiry_date IS NOT NULL
+                  AND b.expiry_date <= :cutoff
+                ORDER BY b.expiry_date ASC, p.name ASC, b.batch_number ASC';
+
+        $stmt = Database::connection()->prepare($sql);
+        $stmt->execute([
+            'today' => $today->format('Y-m-d'),
+            'cutoff' => $cutoff->format('Y-m-d'),
+        ]);
+        $items = $stmt->fetchAll() ?: [];
+
+        $summary = [
+            'batch_count' => count($items),
+            'expired_batch_count' => 0,
+            'expiring_batch_count' => 0,
+            'total_quantity' => 0.0,
+        ];
+        foreach ($items as $item) {
+            if ((int) $item['days_remaining'] < 0) {
+                $summary['expired_batch_count']++;
+            } else {
+                $summary['expiring_batch_count']++;
+            }
+            $summary['total_quantity'] += (float) $item['quantity'];
+        }
+
+        return [
+            'tracking_enabled' => true,
+            'days' => $days,
+            'items' => $items,
+            'summary' => $summary,
+        ];
+    }
+
     public function stockValuation(?int $warehouseId = null, string $search = ''): array
     {
         $where = ['p.is_active = 1'];

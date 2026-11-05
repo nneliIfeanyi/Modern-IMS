@@ -116,7 +116,7 @@ function printCustomerStatement() {
     }
 
     const customer = state.selectedCustomer;
-    const appName = document.documentElement.dataset.appName || 'ANTOBELL IMS';
+    const appName = document.documentElement.dataset.appName || 'CHYPAUL IMS';
     const rows = state.statement.length === 0
         ? '<tr><td colspan="3">No ledger entries</td></tr>'
         : state.statement.map((entry) => `
@@ -146,7 +146,7 @@ function printLastPaymentReceipt() {
 
     const customer = state.selectedCustomer;
     const payment = state.lastPayment;
-    const appName = document.documentElement.dataset.appName || 'ANTOBELL IMS';
+    const appName = document.documentElement.dataset.appName || 'CHYPAUL IMS';
     printHtml(`Payment receipt ${payment.id}`, `
         <h1>${escapeHtml(appName)} PAYMENT RECEIPT</h1>
         <p><strong>Receipt:</strong> ${escapeHtml(String(payment.id))}</p>

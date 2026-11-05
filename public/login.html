@@ -4,37 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IMS Login</title>
+    <meta name="theme-color" content="#1769d2">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>Sign in | CHYPAUL IMS</title>
     <script src="assets/js/theme-init.js"></script>
+    <script src="assets/js/pwa.js" defer></script>
     <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/login.css" rel="stylesheet">
 </head>
 
-<body class="bg-light">
-    <main class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-7 col-lg-5">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4 p-md-5">
-                        <h1 class="h4 mb-3">IMS Login</h1>
-                        <p class="text-muted small mb-4">Sign in with your staff account.</p>
+<body class="login-page">
+    <main class="login-layout">
+        <section class="login-card" aria-labelledby="login-title">
+            <a class="login-brand" href="login.html" aria-label="CHYPAUL IMS home">
+                <span class="login-brand-mark" aria-hidden="true"><i class="bi bi-box-seam-fill"></i></span>
+                <span>CHYPAUL <span class="login-brand-light">IMS</span></span>
+            </a>
 
-                        <form id="login-form" novalidate>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Sign In</button>
-                        </form>
+            <div class="login-heading">
+                <span class="login-eyebrow"><i class="bi bi-person-lock" aria-hidden="true"></i> STAFF PORTAL</span>
+                <h1 id="login-title">Welcome back</h1>
+                <p>Sign in to manage your inventory and operations.</p>
+            </div>
 
-                        <div id="feedback" class="alert mt-3 d-none" role="alert"></div>
+            <form id="login-form" novalidate>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Work email</label>
+                    <div class="input-group login-input">
+                        <span class="input-group-text"><i class="bi bi-envelope" aria-hidden="true"></i></span>
+                        <input type="email" id="email" class="form-control" placeholder="you@company.com"
+                            autocomplete="username" required>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group login-input">
+                        <span class="input-group-text"><i class="bi bi-lock" aria-hidden="true"></i></span>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password"
+                            autocomplete="current-password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary login-submit">
+                    <span>Sign in</span>
+                    <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                </button>
+            </form>
+
+            <div id="feedback" class="alert mt-3 d-none" role="alert"></div>
+
+            <p class="login-security"><i class="bi bi-shield-lock" aria-hidden="true"></i> Secure access for authorized staff</p>
+            <button class="btn btn-outline-primary login-install" type="button" data-pwa-install hidden>
+                <i class="bi bi-download" aria-hidden="true"></i> Install CHYPAUL IMS
+            </button>
+        </section>
     </main>
 
     <script type="module">

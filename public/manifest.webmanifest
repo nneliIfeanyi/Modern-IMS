@@ -1,0 +1,19 @@
+{
+    "id": "./",
+    "name": "CHYPAUL IMS",
+    "short_name": "CHYPAUL",
+    "description": "CHYPAUL inventory management system.",
+    "start_url": "./login.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f4f7fb",
+    "theme_color": "#1769d2",
+    "icons": [
+        {
+            "src": "assets/img/pwa-icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

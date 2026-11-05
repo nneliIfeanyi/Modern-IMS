@@ -13,6 +13,7 @@ use App\Models\SupplierModel;
 use App\Models\WarehouseModel;
 use App\Services\PurchaseOrderException;
 use App\Services\PurchaseOrderService;
+use App\Services\WhatsAppNotificationService;
 
 final class PurchaseOrderController
 {
@@ -21,6 +22,7 @@ final class PurchaseOrderController
     private SupplierModel $suppliers;
     private WarehouseModel $warehouses;
     private ProductModel $products;
+    private WhatsAppNotificationService $whatsappNotifications;
 
     public function __construct()
     {
@@ -29,6 +31,7 @@ final class PurchaseOrderController
         $this->suppliers = new SupplierModel();
         $this->warehouses = new WarehouseModel();
         $this->products = new ProductModel();
+        $this->whatsappNotifications = new WhatsAppNotificationService();
     }
 
     public function index(Request $request)
@@ -105,7 +108,25 @@ final class PurchaseOrderController
 
         try {
             $result = $this->service->send($poId);
-            return Response::success($result, 'Purchase order sent.');
+            $supplierId = (int) ($result['order']['supplier_id'] ?? 0);
+            $supplier = $supplierId > 0 ? $this->suppliers->findById($supplierId) : null;
+
+            if ($supplier === null) {
+                error_log('WhatsApp purchase-order notification failed: supplier record was not found.');
+                $notification = [
+                    'sent' => false,
+                    'message' => 'Supplier details could not be loaded for WhatsApp notification.',
+                ];
+            } else {
+                $notification = $this->whatsappNotifications->notifyPurchaseOrder($result, $supplier);
+            }
+
+            $result['whatsapp_notification'] = $notification;
+            $message = $notification['sent']
+                ? 'Purchase order marked as ordered; WhatsApp notification accepted.'
+                : 'Purchase order marked as ordered, but the WhatsApp notification failed.';
+
+            return Response::success($result, $message);
         } catch (PurchaseOrderException $exception) {
             return Response::error($exception->getMessage(), $exception->extra(), $exception->statusCode());
         }
