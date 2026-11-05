@@ -1,8 +1,8 @@
 {
     "id": "./",
-    "name": "CHYPAUL IMS",
-    "short_name": "CHYPAUL",
-    "description": "CHYPAUL inventory management system.",
+    "name": "STANVIC IMS",
+    "short_name": "STANVIC",
+    "description": "STANVIC inventory management system.",
     "start_url": "./login.html",
     "scope": "./",
     "display": "standalone",

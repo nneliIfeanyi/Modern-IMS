@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chypaul-ims-shell-v1';
+const CACHE_NAME = 'stanvic-ims-shell-v2';
 const SHELL_FILES = [
     'login.html',
     'manifest.webmanifest',
@@ -28,7 +28,8 @@ self.addEventListener('activate', (event) => {
         caches.keys()
             .then((cacheNames) => Promise.all(
                 cacheNames
-                    .filter((cacheName) => cacheName.startsWith('chypaul-ims-') && cacheName !== CACHE_NAME)
+                    .filter((cacheName) => cacheName.endsWith('-ims-shell-v1')
+                        || (cacheName.startsWith('stanvic-ims-') && cacheName !== CACHE_NAME))
                     .map((cacheName) => caches.delete(cacheName))
             ))
             .then(() => self.clients.claim())

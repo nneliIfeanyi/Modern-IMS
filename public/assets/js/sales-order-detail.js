@@ -553,7 +553,7 @@ async function submitFulfillment(event) {
 }
 
 function renderReceiptHtml(receipt) {
-    const appName = document.documentElement.dataset.appName || 'CHYPAUL IMS';
+    const appName = document.documentElement.dataset.appName || 'STANVIC IMS';
     const order = receipt?.order || {};
     const items = receipt?.items || [];
     const payments = receipt?.payments || [];

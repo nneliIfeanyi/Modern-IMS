@@ -10,7 +10,7 @@ final class AppSettingModel
 {
     /** @var array<string, string> */
     private const DEFAULTS = [
-        'site_name' => 'CHYPAUL IMS',
+        'site_name' => 'STANVIC IMS',
         'theme_color' => '#0d6efd',
     ];
 

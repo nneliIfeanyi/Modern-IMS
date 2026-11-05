@@ -11,7 +11,7 @@
             dialog.className = 'pwa-install-dialog';
             dialog.setAttribute('aria-labelledby', 'pwa-install-title');
             dialog.innerHTML = `
-                <h2 id="pwa-install-title">Install CHYPAUL IMS</h2>
+                <h2 id="pwa-install-title">Install STANVIC IMS</h2>
                 <p>Use your browser menu to install this app or add it to your home screen.</p>
                 <ul>
                     <li>On Chrome or Edge, choose <strong>Install app</strong> from the browser menu.</li>
