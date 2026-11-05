@@ -15,6 +15,10 @@
         root.style.setProperty('--bs-primary', normalizedColor);
         root.style.setProperty('--bs-primary-rgb', `${red}, ${green}, ${blue}`);
         root.style.setProperty('--bs-focus-ring-color', `rgba(${red}, ${green}, ${blue}, 0.25)`);
+        const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeColorMeta) {
+            themeColorMeta.content = normalizedColor;
+        }
         return true;
     }
 

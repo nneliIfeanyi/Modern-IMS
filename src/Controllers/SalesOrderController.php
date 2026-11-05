@@ -287,7 +287,7 @@ final class SalesOrderController
         $items = $receipt['items'] ?? [];
         $payments = $receipt['payments'] ?? [];
         $summary = $receipt['summary'] ?? [];
-        $appName = $this->appSettings->getAll()['site_name'] ?? 'ANTOBELL IMS';
+        $appName = $this->appSettings->getAll()['site_name'] ?? 'CHYPAUL IMS';
 
         $lines = [
             $appName . ' SALES RECEIPT',

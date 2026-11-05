@@ -10,7 +10,7 @@ final class AppSettingModel
 {
     /** @var array<string, string> */
     private const DEFAULTS = [
-        'site_name' => 'ANTOBELL IMS',
+        'site_name' => 'CHYPAUL IMS',
         'theme_color' => '#0d6efd',
     ];
 

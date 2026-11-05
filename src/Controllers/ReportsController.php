@@ -35,6 +35,26 @@ final class ReportsController
         return Response::success(['items' => $items], 'Low-stock report loaded.');
     }
 
+    public function movementRecap(Request $request)
+    {
+        return Response::success($this->reports->movementRecap(), 'Stock movement recap loaded.');
+    }
+
+    public function expiringStock(Request $request)
+    {
+        $days = (string) $request->query('days', '90');
+        if (!in_array($days, ['30', '60', '90'], true)) {
+            return Response::error('Validation failed.', [
+                'fields' => ['days' => 'days must be 30, 60, or 90.'],
+            ], 422);
+        }
+
+        return Response::success(
+            $this->reports->expiringStock((int) $days),
+            'Expiring stock report loaded.'
+        );
+    }
+
     public function movementHistory(Request $request)
     {
         $filters = [

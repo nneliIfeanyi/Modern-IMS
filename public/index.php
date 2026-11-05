@@ -136,6 +136,8 @@ $router->add('POST', '/api/sales-orders/{id}/fulfill', [\App\Controllers\SalesOr
 
 $router->add('GET', '/api/reports/stock-valuation', [ReportsController::class, 'stockValuation'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 $router->add('GET', '/api/reports/movement-history', [ReportsController::class, 'movementHistory'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('GET', '/api/reports/movement-recap', [ReportsController::class, 'movementRecap'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('GET', '/api/reports/expiring-stock', [ReportsController::class, 'expiringStock'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 $router->add('GET', '/api/reports/low-stock', [ReportsController::class, 'lowStock'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 
 $router->add('GET', '/api/settings/profile', [SettingsController::class, 'profile'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
