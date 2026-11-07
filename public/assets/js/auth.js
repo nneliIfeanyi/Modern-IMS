@@ -13,13 +13,17 @@ function resolveApiBase() {
 const API_BASE = resolveApiBase();
 
 async function apiRequest(path, options = {}) {
+    const headers = new Headers(options.headers || {});
+    if (options.body instanceof FormData) {
+        headers.delete('Content-Type');
+    } else if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+    }
+
     const response = await fetch(`${API_BASE}${path}`, {
         credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            ...(options.headers || {}),
-        },
         ...options,
+        headers,
     });
 
     let payload = null;

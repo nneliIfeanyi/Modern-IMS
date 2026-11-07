@@ -28,6 +28,18 @@ Plain PHP + MySQL + Bootstrap inventory management system.
 3. For a fresh deployment, select the database and import `database/fresh_install.sql`.
 4. Start app from `public/` as document root.
 
+For an existing deployment, import `database/migrations/20261105_create_gadget_catalog.sql` and `database/migrations/20261106_create_pharmacy_catalog.sql` into the IMS database before using the catalogues.
+
+### Gadget Catalogue
+
+Admin and manager users can manage the products displayed on `gadgets.html` from `public/gadget-catalog.html`. This catalogue is independent of inventory and does not change stock, cost, or selling-price records. Public visitors can only see published items; catalogue images must be JPG, PNG, or WebP and no larger than 5 MB.
+
+The gadget catalogue migration and fresh-install script include five sample listings across the TV, refrigerator, washing machine, home theatre, and kitchen appliance categories. Sample prices, brands, and models are left unset; confirm product details with the store and update the listings in the catalogue manager.
+
+### Pharmacy Catalogue
+
+Admin and manager users manage the products displayed on `index.html` from `public/pharmacy-catalog.html`. The pharmacy catalogue is independent of IMS inventory. Its migration imports the current featured products. Public listings are product enquiries only: prices and availability require store confirmation, and medicine enquiries are subject to pharmacist review and applicable prescription requirements. Catalogue images must be JPG, PNG, or WebP and no larger than 5 MB.
+
 ### Progressive Web App
 
 The admin app can be installed from supported browsers using the **Install** button in the login screen or app header. It requires HTTPS in production; `localhost` is supported for local development. The button opens the native install prompt when available and otherwise shows browser-specific install guidance.
@@ -138,6 +150,8 @@ The Reports page includes daily, week-to-date, and month-to-date stock movement 
 - Login: `login.html`
 - Dashboard: `dashboard.html`
 - Products: `products.html`
+- Pharmacy Catalogue: `pharmacy-catalog.html`
+- Gadget Catalogue: `gadget-catalog.html`
 - Stock Movements: `stock-movements.html`
 - Purchase Orders: `purchase-orders.html`
 - Sales: `sales.html`

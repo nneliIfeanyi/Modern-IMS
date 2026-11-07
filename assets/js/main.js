@@ -6,8 +6,8 @@
     const fulfilment = document.querySelector('#fulfilment');
     const addressWrap = document.querySelector('#addressWrap');
     const addressInput = document.querySelector('#deliveryAddress');
-    const draftKey = 'chypaul.orderDraft';
-    const legacyDraftKey = 'medimart.orderDraft';
+    const draftKey = document.body.dataset.orderDraftKey || 'chypaul.orderDraft';
+    const legacyDraftKey = draftKey === 'chypaul.orderDraft' ? 'medimart.orderDraft' : '';
 
     const setText = (key, value) => document.querySelectorAll(`[data-store="${key}"]`).forEach((node) => {
         node.textContent = value;
@@ -21,7 +21,7 @@
     document.querySelectorAll('[data-store-link="maps"]').forEach((link) => link.href = config.mapsUrl || '#');
     ['instagram', 'facebook', 'whatsapp'].forEach((network) => document.querySelectorAll(`[data-store-link="${network}"]`).forEach((link) => link.href = config.social?.[network] || '#'));
     document.querySelectorAll('[data-store="name"]').forEach((node) => node.textContent = config.name || 'Your Store');
-    document.title = `${config.name || 'Your Store'} | Pharmacy & Supermarket`;
+    document.title = `${config.name || 'Your Store'} | ${document.body.dataset.pageTitle || 'Pharmacy & Supermarket'}`;
     document.querySelector('#copyrightYear').textContent = new Date().getFullYear();
 
     const heroImage = document.querySelector('.hero-visual img');
@@ -67,40 +67,8 @@
         window.setInterval(changeHeroSlide, 5000);
     }
 
-    async function loadFeaturedItems() {
-        const featuredGrid = document.querySelector('.featured-section .row');
-        if (!featuredGrid) return;
-
-        try {
-            const response = await fetch('public/featured.php', { headers: { Accept: 'application/json' } });
-            if (!response.ok) throw new Error('Featured items could not be loaded.');
-            const payload = await response.json();
-            featuredGrid.replaceChildren();
-
-            (payload.items || []).forEach((item) => {
-                const column = document.createElement('div');
-                column.className = 'col-sm-6 col-lg-3';
-                column.innerHTML = '<article class="product-card"><div class="product-image"><span></span></div><div class="product-body"><small></small><h3></h3><p></p><button class="btn btn-outline-primary w-100 add-product" type="button">Add to order</button></div></article>';
-                const image = column.querySelector('.product-image');
-                image.style.backgroundImage = `linear-gradient(rgba(255,255,255,.18), rgba(255,255,255,.18)), url("${item.image}")`;
-                image.style.backgroundSize = 'cover';
-                image.style.backgroundPosition = 'center';
-                column.querySelector('.product-image span').textContent = item.category || '';
-                column.querySelector('.product-body small').textContent = item.label || '';
-                column.querySelector('.product-body h3').textContent = item.title || '';
-                column.querySelector('.product-body p').textContent = item.description || '';
-                column.querySelector('.add-product').dataset.product = item.title || '';
-                featuredGrid.appendChild(column);
-            });
-        } catch (error) {
-            featuredGrid.replaceChildren();
-        }
-    }
-
-    loadFeaturedItems();
-
     try {
-        const savedDraft = localStorage.getItem(draftKey) || localStorage.getItem(legacyDraftKey) || '';
+        const savedDraft = localStorage.getItem(draftKey) || (legacyDraftKey ? localStorage.getItem(legacyDraftKey) : '') || '';
         orderText.value = savedDraft;
         if (savedDraft && !localStorage.getItem(draftKey)) localStorage.setItem(draftKey, savedDraft);
     } catch (error) {
@@ -118,7 +86,7 @@
         if (!delivery) addressInput.value = '';
     });
 
-    document.querySelector('.featured-section .row')?.addEventListener('click', (event) => {
+    document.querySelector('.featured-section .row, [data-order-grid]')?.addEventListener('click', (event) => {
         const button = event.target.closest('.add-product');
         if (!button) return;
         const product = button.dataset.product;

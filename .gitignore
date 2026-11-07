@@ -9,6 +9,8 @@
 # Runtime data
 /storage/logs/
 /storage/tmp/
+/public/uploads/gadget-catalog/
+/public/uploads/pharmacy-catalog/
 *.log
 
 # Tool caches

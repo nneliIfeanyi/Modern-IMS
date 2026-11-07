@@ -8,6 +8,8 @@ use App\Controllers\AppSettingsController;
 use App\Controllers\CategoryController;
 use App\Controllers\CustomerController;
 use App\Controllers\DashboardController;
+use App\Controllers\GadgetCatalogController;
+use App\Controllers\PharmacyCatalogController;
 use App\Controllers\ProductController;
 use App\Controllers\ReportsController;
 use App\Controllers\SettingsController;
@@ -102,6 +104,20 @@ $router->add('POST', '/api/products', [ProductController::class, 'create'], [Cor
 $router->add('GET', '/api/products/{id}', [ProductController::class, 'show'], [CorsMiddleware::class, 'auth']);
 $router->add('PUT', '/api/products/{id}', [ProductController::class, 'update'], [CorsMiddleware::class, 'auth']);
 $router->add('DELETE', '/api/products/{id}', [ProductController::class, 'delete'], [CorsMiddleware::class, 'auth']);
+
+$router->add('GET', '/api/gadget-catalog', [GadgetCatalogController::class, 'publicIndex'], [CorsMiddleware::class]);
+$router->add('GET', '/api/admin/gadget-catalog', [GadgetCatalogController::class, 'adminIndex'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('POST', '/api/admin/gadget-catalog', [GadgetCatalogController::class, 'create'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('POST', '/api/admin/gadget-catalog/{id}', [GadgetCatalogController::class, 'update'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('PUT', '/api/admin/gadget-catalog/{id}', [GadgetCatalogController::class, 'update'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('DELETE', '/api/admin/gadget-catalog/{id}', [GadgetCatalogController::class, 'delete'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+
+$router->add('GET', '/api/pharmacy-catalog', [PharmacyCatalogController::class, 'publicIndex'], [CorsMiddleware::class]);
+$router->add('GET', '/api/admin/pharmacy-catalog', [PharmacyCatalogController::class, 'adminIndex'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('POST', '/api/admin/pharmacy-catalog', [PharmacyCatalogController::class, 'create'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('POST', '/api/admin/pharmacy-catalog/{id}', [PharmacyCatalogController::class, 'update'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('PUT', '/api/admin/pharmacy-catalog/{id}', [PharmacyCatalogController::class, 'update'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
+$router->add('DELETE', '/api/admin/pharmacy-catalog/{id}', [PharmacyCatalogController::class, 'delete'], [CorsMiddleware::class, 'auth', 'role:admin,manager']);
 
 $router->add('GET', '/api/warehouses', [WarehouseController::class, 'index'], [CorsMiddleware::class, 'auth']);
 $router->add('POST', '/api/warehouses', [WarehouseController::class, 'create'], [CorsMiddleware::class, 'auth']);
